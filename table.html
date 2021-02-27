@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Nine Circles</title>
+</head>
+<body>
+    <div class="table-wrapper">
+        <div class="stacks">
+            <div id="stack-tactics" class="slot empty"></div>
+            <div id="stack-troops" class="slot">
+                <div class="card backside troops"></div>
+            </div>
+        </div>
+        <div class="p1">
+            <div class="slot">
+                <div class="card suit-1 value-1"></div>
+                <div class="card suit-1 value-2"></div>
+                <div class="card suit-1 value-3"></div>
+            </div>
+            <div class="slot empty"></div>
+            <div class="slot empty"></div>
+            <div class="slot empty"></div>
+            <div class="slot empty"></div>
+            <div class="slot empty"></div>
+            <div class="slot empty"></div>
+            <div class="slot empty"></div>
+            <div class="slot empty"></div>
+        </div>
+        <div class="flags">
+            <div class="flag p1-won"></div>
+            <div class="flag"></div>
+            <div class="flag"></div>
+            <div class="flag p2-won"></div>
+            <div class="flag"></div>
+            <div class="flag"></div>
+            <div class="flag"></div>
+            <div class="flag"></div>
+            <div class="flag"></div>
+        </div>
+        <div class="p2">
+            <div class="slot empty"></div>
+            <div class="slot empty available"></div>
+            <div class="slot empty available"></div>
+            <div class="slot">
+                <div class="card suit-2 value-3"></div>
+                <div class="card suit-5 value-3"></div>
+                <div class="card suit-6 value-3"></div>
+            </div>
+            <div class="slot available">
+                <div class="card suit-2 value-2"></div>
+                <div class="card suit-3 value-2"></div>
+            </div>
+            <div class="slot empty available"></div>
+            <div class="slot empty available"></div>
+            <div class="slot empty available"></div>
+            <div class="slot empty available"></div>
+        </div>
+        <div class="message"><h2>It's your turn</h2>You must place a card from your hand.</div>
+        <div class="hand">
+            <div class="card suit-5 value-7 available"></div>
+            <div class="card suit-5 value-8 available selected"></div>
+            <div class="card suit-4 value-2 available"></div>
+            <div class="card suit-5 value-1 available"></div>
+            <div class="card suit-3 value-9 available"></div>
+        </div>
+        <div class="playeraid">
+            <div id="playeraid-card" class="card">
+                <p>
+                    The first player to win 5 circles or 3 in a row wins the game.
+                </p>
+                <h4>Formations</h4>
+                <ul>
+                    <li>Consecutive Suit & Color</li>
+                    <li>Number</li>
+                    <li>Color</li>
+                    <li>Suit</li>
+                    <li>Sum</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript" src="js/vanilla-tilt.js"></script>
+<script type="text/javascript">
+	VanillaTilt.init(document.querySelectorAll(".hand .card:not(.selected)"), {
+		max: 10,
+        scale: 1,
+        glare: true,
+        "max-glare": 0.5, 
+		speed: 400,
+        reverse: true
+	});
+</script>

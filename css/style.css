@@ -1,0 +1,203 @@
+@import url("_card.css");
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-size: max(2vh, 8px);
+}
+
+ol, ul, li, h1, h2, h3, h4, p {
+    font-size: 100%;
+    list-style: none;
+}
+
+h1, h2, h3, h4 {
+    padding-top: 1em;
+}
+
+body {
+    background: rgb(191, 214, 214);
+    background: radial-gradient(circle, rgba(31,78,82,1) 0%, rgba(8,34,40,1) 88%);
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    line-height: 1.5;
+}
+
+.table-wrapper {
+    padding: 1vmax;
+    display: grid;
+    grid-template-columns: var(--card-w) auto;
+    grid-auto-rows: max-content;
+    grid-template-areas: 
+        'stacks p1' 
+        'stacks flags' 
+        'stacks p2' 
+        'playeraid message' 
+        'playeraid hand';
+    row-gap: 1em;
+    column-gap: 2em;
+    padding-top: 2em;
+    justify-content: center;
+}
+
+.p1, .flags, .p2 {
+    display: grid;
+    grid-template-columns: repeat(9, auto);
+    column-gap: calc(var(--card-w) / 6);
+    justify-items: center;
+}
+
+.p1, .p2 {
+    align-items: start;
+}
+
+.p1 {
+    transform: scaleY(-1);
+} 
+
+.flags {
+    grid-area: flags;
+    align-items: center;
+    z-index: -1;
+}
+
+.flag {
+    border: max(2px, 0.3em) solid rgb(53, 97, 91);
+    border-radius: 50%;
+    width: calc(var(--card-w) / 3);
+    height: calc(var(--card-w) / 3);
+}
+
+.flag.p1-won {
+    transform: translateY(calc(var(--card-w) / -3));
+    border-color: white;
+    background: white;
+    box-shadow: rgb(209, 192, 147) 0 0 1em;
+}
+
+.flag.p2-won {
+    transform: translateY(calc(var(--card-w) / 3));
+    border-color: white;
+    background: white;
+    box-shadow: rgb(209, 192, 147) 0 0 1em;
+}
+
+.hand {
+    grid-area: hand;
+    justify-self: center;
+    padding: 0.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: calc(var(--card-w) / 6);
+    background: rgba(90, 114, 107, 0.3);
+    border-radius: calc(1.2 * var(--card-r));
+    transform: scale(1.1);
+    width: min-content;
+    height: min-content;
+}
+
+.slot {
+    width: var(--card-w);
+    height: var(--card-h);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: var(--card-r);
+}
+
+.slot.empty {
+    color: rgb(72, 97, 91);
+    border: 1px dashed rgb(72, 97, 91);
+}
+
+.p1 .slot, .p2 .slot {
+    margin-bottom: calc(var(--card-h) * (1/2));
+}
+
+.slot .card:nth-child(1) {
+    transform: translateY(0em) rotate(0.5deg);
+}
+.slot .card:nth-child(2) {
+    transform: translateY(calc(var(--card-h) * (1/4))) rotate(-0.5deg);
+}
+.slot .card:nth-child(3) {
+    transform: translateY(calc(var(--card-h) * (1/2))) rotate(0.5deg);
+}
+
+.slot .card {
+    position: absolute;
+}
+
+.playeraid {
+    grid-area: playeraid;
+    position: relative;
+}
+
+#playeraid-card {
+    background:rgb(187, 177, 144);
+    color: rgb(55, 56, 45);
+    transform: rotate(-5deg);
+    transition: all 250ms ease;
+    pointer-events: none;
+    font-size: 45%;
+    padding: 1em;
+    line-height: normal;
+    text-align: left;
+    justify-content: start;
+}
+
+.playeraid:hover #playeraid-card {
+    transform: scale(3) translateX(50%) translateY(-25%) rotate(-1deg);
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: calc(var(--card-r) / 2);
+    width: calc(var(--card-w) * 2);
+    transform-origin: bottom left;
+    box-shadow: 0 0 2em rgba(0, 0, 0, 1);
+    box-shadow: 0 0 19em rgba(0, 0, 0, 1);
+}
+
+.stacks {
+    grid-area: stacks;
+    display: flex;
+    gap: 2em;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.message {
+    grid-area: message;
+    align-self: end;
+    color:rgb(224, 224, 224);
+    text-align: center;
+    cursor: default;
+    user-select: none;
+    height: 5em;
+}
+
+.slot.available, .slot.available > * {
+    cursor: pointer;
+    box-shadow: rgba(216, 216, 214, 0.2) 0 0 0.5em;
+    transition: all 200ms ease-out;
+}
+
+.slot.available:hover {
+    background: rgba(216, 216, 214, 0.2);
+    box-shadow: rgba(216, 216, 214, 0.2) 0 0 0.5em;
+}
+
+.slot.available:hover > * {
+    filter: brightness(1.3);
+}
+
+.hand .card.selected {
+    transform: scale(1.15) translateY(-10%);
+}
+
+.js-tilt-glare {
+    border-radius: var(--card-r);
+}

@@ -1,0 +1,123 @@
+:root {
+    --card-w: max(7vw, 2em);
+    --card-h: calc(1.6 * var(--card-w));
+    --card-r: calc(var(--card-h) / 8); 
+    --suit1-c: rgb(185, 123, 187);
+    --suit2-c: rgb(67, 100, 143);
+    --suit3-c: rgb(103, 189, 192);
+    --suit4-c: rgb(50, 189, 147);
+    --suit5-c: rgb(212, 189, 89);
+    --suit6-c: rgb(212, 89, 136);
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: var(--card-w);
+    height: var(--card-h);
+    border-radius: var(--card-r);
+    box-shadow: 0 0 3em rgba(0, 0, 0, 0.2);
+    background: rgb(180, 178, 178);
+    text-align: center;
+    position: relative;
+}
+
+.card.backside {
+    background: rgb(180, 178, 178);
+}
+
+.edge {
+    border-top-left-radius: var(--card-r);
+    border-top-right-radius: var(--card-r);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    color: rgb(255, 255, 255);
+    line-height: normal;
+    mix-blend-mode: hard-light;
+    opacity: 0.9;
+    padding: 0.2em;
+}
+
+.edge > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edge > .edge-center {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.edge-bottom {
+    transform: rotate(180deg);
+}
+
+.card.suit-1 {
+    background-color:var(--suit1-c);
+}
+.card.suit-2 {
+    background-color: var(--suit2-c);
+}
+.card.suit-3 {
+    background-color: var(--suit3-c);
+}
+.card.suit-4 {
+    background-color: var(--suit4-c);
+}
+.card.suit-5 {
+    background-color: var(--suit5-c);
+}
+.card.suit-6 {
+    background-color: var(--suit6-c);
+}
+
+.card-image {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background-repeat: no-repeat;
+    background-size: 500% 200%;
+    mix-blend-mode: overlay;
+    background: url("/img/warriors.png");
+    width: var(--card-w);
+    height: var(--card-h);
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: var(--card-r);
+}
+
+.value-1 .card-image {
+    background-position: 0 0;
+}
+.value-2 .card-image {
+    background-position: 200px 0;
+}
+.value-3 .card-image {
+    background-position: 400px 0;
+}
+.value-4 .card-image {
+    background-position: 600px 0px;
+}
+.value-5 .card-image {
+    background-position: 800px 0px;
+}
+.value-6 .card-image {
+    background-position: 0px 200px;
+}
+.value-7 .card-image {
+    background-position: 200px 200px;
+}
+.value-8 .card-image {
+    background-position: 400px 200px;
+}
+.value-9 .card-image {
+    background-position: 600px 200px;
+}
+.value-10 .card-image {
+    background-position: 800px 200px;
+}

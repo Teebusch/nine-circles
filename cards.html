@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Card Demo</title>
+</head>
+<body>
+    <div class="card-demo-wrapper">
+    </div>  
+</body>
+</html>
+
+<template id="card-template">
+    <div class="card">
+        <div class="edge edge-top">
+            <span class="edge-left"></span>
+            <span class="edge-center">1</span>
+            <span class="edge-right">⛭</span>
+        </div>
+        <div class="card-image"></div>
+        <div class="edge edge-bottom">
+            <span class="edge-left"></span>
+            <span class="edge-center">1</span>
+            <span class="edge-right">⛭</span>
+        </div>
+    </div>
+</template>
+
+<style>
+    .card-demo-wrapper {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+        row-gap: 1em;
+        column-gap: 1em;
+        align-items: center;
+        padding: 1vmax;
+    }
+</style>
+
+<script type="text/javascript">
+
+    const wrapper = document.querySelector(".card-demo-wrapper");
+    let template = document.querySelector("#card-template");
+    const suits = ['♠', '❤', '✦', '✤', '✿', '✚'];
+
+    for (suit = 1; suit <= 6; suit++) {
+        for (value = 1; value <= 10; value++) {
+            
+            let card = template.content.cloneNode(true);
+            card.querySelector("div.card").classList.add(`suit-${suit}`, `value-${value}`)
+
+            card.querySelectorAll("span.edge-center").forEach(e => {
+                e.textContent = value;
+            });
+            
+            card.querySelectorAll("span.edge-right").forEach(e => {
+                e.textContent = suits[suit-1];
+            });
+
+            wrapper.appendChild(card)
+        }
+    }
+</script>
