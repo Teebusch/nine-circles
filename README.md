@@ -1,18 +1,29 @@
-<a href='https://www.freepik.com/vectors/man'>Man vector created by pch.vector - www.freepik.com</a>
 
-<a href='https://www.freepik.com/vectors/leaf'>Leaf vector created by macrovector - www.freepik.com</a>
+# Nine Circles
 
-<a href='https://www.freepik.com/vectors/leaf'>Leaf vector created by macrovector - www.freepik.com</a>
+A classic capture the hill card game.
+## How to play?
+
+Place 3 troops under each circle that trump your oppoonents troops.
+The first player to capture 5 circles or 3 circles in a row wins.
+
+### Formations
+
+* Consecutive numbers, same color
+* Same number
+* Same color
+* Consecutive numbers
+* Sum of cards
 
 
-            <h2>how to play?</h2>
-            Place 3 troops under each circle that trump your oppoonents troops.
-            The first player to capture 5 circles or 3 in a row wins.
-            <h2>Order</h2>
-            <ul>
-                <li>Consecutive numbers, same color</li>
-                <li>Same number</li>
-                <li>Same color</li>
-                <li>Consecutive numbers</li>
-                <li>Sum of cards</li>
-            </ul>
+## Other Monster images? 
+
+https://www.freepik.com/free-vector/funny-monsters-set_6438630.htm
+
+https://www.freepik.com/free-vector/trendy-tags-design-with-funny-monsters-bright-creepy-elements-creatures-with-greeting-text-beasts-celebration-halloween-concept-template-greeting-labels-invitation-card_11672026.htm#page=3&query=funny+monsters+set&position=0
+
+
+## License information
+
+"Funny monsters" vectors [Designed by Freepik](http://www.freepik.com)
+
