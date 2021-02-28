@@ -1,7 +1,8 @@
 :root {
-    --card-w: max(7vw, 2em);
+    --card-w: max(7vw, 4em);
     --card-h: calc(1.6 * var(--card-w));
     --card-r: calc(var(--card-h) / 8); 
+    --suit0-c: rgb(236, 236, 236);
     --suit1-c: rgb(185, 123, 187);
     --suit2-c: rgb(67, 100, 143);
     --suit3-c: rgb(103, 189, 192);
@@ -21,32 +22,33 @@
     background: rgb(180, 178, 178);
     text-align: center;
     position: relative;
+    color: rgb(255, 255, 255);
+    line-height: normal;
 }
 
-.card.backside {
+.card.facedown {
     background: rgb(180, 178, 178);
 }
 
 .edge {
     border-top-left-radius: var(--card-r);
     border-top-right-radius: var(--card-r);
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    color: rgb(255, 255, 255);
-    line-height: normal;
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    justify-items: center;
+    align-items: center;
     mix-blend-mode: hard-light;
     opacity: 0.9;
-    padding: 0.2em;
+    padding: 0.2em 0.5em;
 }
 
-.edge > span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.edge-left, .edge-right {
+    flex: 1 1 0;
 }
 
 .edge > .edge-center {
-    font-size: 2em;
+    font-size: min(2em, calc(var(--card-w) * .3));
     font-weight: bold;
 }
 
@@ -54,6 +56,15 @@
     transform: rotate(180deg);
 }
 
+.card-text {
+    padding: 0 0.2em;
+    color:rgb(30, 3, 36);
+    mix-blend-mode: multiply;   
+}
+
+.card.suit-0 {
+    background-color:var(--suit0-c);
+}
 .card.suit-1 {
     background-color:var(--suit1-c);
 }
@@ -71,6 +82,10 @@
 }
 .card.suit-6 {
     background-color: var(--suit6-c);
+}
+.card.suit-wild {
+    background-image: linear-gradient(to right top,
+     var(--suit1-c), var(--suit2-c), var(--suit3-c), var(--suit4-c), var(--suit5-c), var(--suit6-c));
 }
 
 .card-image {
@@ -120,4 +135,8 @@
 }
 .value-10 .card-image {
     background-position: 800px 200px;
+}
+
+.card.tactic > .card-image {
+    background-image: none;
 }

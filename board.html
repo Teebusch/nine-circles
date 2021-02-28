@@ -8,13 +8,19 @@
     <title>Nine Circles</title>
 </head>
 <body>
-    <div class="table-wrapper">
-        <div class="stacks">
-            <div id="stack-tactics" class="slot empty"></div>
-            <div id="stack-troops" class="slot">
-                <div class="card backside troops"></div>
+    <div class="board-wrapper">
+        <div class="decks">
+            <div id="deck-tactics" class="slot empty"></div>
+            <div id="deck-troops" class="slot">
+                <div class="card facedown troops"></div>
             </div>
         </div>
+
+        <div class="slot discard">
+            <div class="card suit-3 value-4"></div>
+            <div class="card suit-4 value-7"></div>
+        </div>
+
         <div class="p1">
             <div class="slot">
                 <div class="card suit-1 value-1"></div>
@@ -64,36 +70,11 @@
             <div class="card suit-5 value-7 available"></div>
             <div class="card suit-5 value-8 available selected"></div>
             <div class="card suit-4 value-2 available"></div>
-            <div class="card suit-5 value-1 available"></div>
+            <div class="card suit-6 value-1 available"></div>
             <div class="card suit-3 value-9 available"></div>
-        </div>
-        <div class="playeraid">
-            <div id="playeraid-card" class="card">
-                <p>
-                    The first player to win 5 circles or 3 in a row wins the game.
-                </p>
-                <h4>Formations</h4>
-                <ul>
-                    <li>Consecutive Suit & Color</li>
-                    <li>Number</li>
-                    <li>Color</li>
-                    <li>Suit</li>
-                    <li>Sum</li>
-                </ul>
-            </div>
+            <div class="card suit-5 value-2 available"></div>
+            <div class="card suit-5 value-5 available"></div>
         </div>
     </div>
 </body>
 </html>
-
-<script type="text/javascript" src="js/vanilla-tilt.js"></script>
-<script type="text/javascript">
-	VanillaTilt.init(document.querySelectorAll(".hand .card:not(.selected)"), {
-		max: 10,
-        scale: 1,
-        glare: true,
-        "max-glare": 0.5, 
-		speed: 400,
-        reverse: true
-	});
-</script>

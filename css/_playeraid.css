@@ -1,0 +1,24 @@
+#playeraid-card {
+    position: absolute;
+    background:rgb(187, 177, 144);
+    color: rgb(55, 56, 45);
+    transform: rotate(-5deg);
+    transition: all 250ms ease;
+    pointer-events: none;
+    font-size: 45%;
+    padding: 1em;
+    line-height: normal;
+    text-align: left;
+    justify-content: start;
+}
+
+.playeraid:hover #playeraid-card {
+    transform: scale(3) translateX(50%) translateY(-25%) rotate(-1deg);
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: calc(var(--card-r) / 2);
+    transform-origin: bottom left;
+    box-shadow: 0 0 2em rgba(0, 0, 0, 1);
+    box-shadow: 0 0 19em rgba(0, 0, 0, 1);
+}

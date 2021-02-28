@@ -15,16 +15,18 @@
 
 <template id="card-template">
     <div class="card">
+        <div class="card-image"></div>
         <div class="edge edge-top">
             <span class="edge-left"></span>
-            <span class="edge-center">1</span>
-            <span class="edge-right">⛭</span>
+            <span class="edge-center"></span>
+            <span class="edge-right"></span>
         </div>
-        <div class="card-image"></div>
+        <div class="card-text">
+        </div>
         <div class="edge edge-bottom">
             <span class="edge-left"></span>
-            <span class="edge-center">1</span>
-            <span class="edge-right">⛭</span>
+            <span class="edge-center"></span>
+            <span class="edge-right"></span>
         </div>
     </div>
 </template>
@@ -32,8 +34,8 @@
 <style>
     .card-demo-wrapper {
         display: grid;
-        grid-template-columns: repeat(10, 1fr);
-        grid-template-rows: repeat(6, 1fr);
+        grid-template-columns: repeat(10, auto);
+        grid-template-rows: repeat(7, auto);
         row-gap: 1em;
         column-gap: 1em;
         align-items: center;
@@ -51,7 +53,7 @@
         for (value = 1; value <= 10; value++) {
             
             let card = template.content.cloneNode(true);
-            card.querySelector("div.card").classList.add(`suit-${suit}`, `value-${value}`)
+            card.querySelector("div.card").classList.add(`suit-${suit}`, `value-${value}`);
 
             card.querySelectorAll("span.edge-center").forEach(e => {
                 e.textContent = value;
@@ -64,4 +66,79 @@
             wrapper.appendChild(card)
         }
     }
+
+    const tactics = [
+        { 
+            text: 'Beelzebub',
+            suit: 'wild',
+            value: '?',
+            tip: 'Define color and value when circle is claimed. Each player can only play one leader per game.'
+        },
+        { 
+            text: 'Mephisto',
+            suit: 'wild',
+            value: '?',
+            tip: 'Define color and value when circle is claimed. Each player can only play one leader per game.' 
+        },
+        { 
+            text: 'Chimera',     
+            suit: 'wild', 
+            value: '8',
+            tip: 'Play as troop. Counts as an 8. Color is determined when circle is claimed.' 
+        },
+        { 
+            text: '3-headed monkey', 
+            suit: 'wild',
+            value: '1-3',
+            tip: 'Play as troop. Determine if 1,2,3 and which color when circle is claimed.'
+        },
+        { 
+            text: 'Mano a Mano',
+            suit: '0',
+            value: '',
+            tip: 'Modify a flag, so that formations do not count, only value.'
+        },
+        { 
+            text: 'Hell frozen over',
+            suit: '0',
+            value: '',
+            tip: 'Modify a flag, so that four cards are needed to claim it. Formations are expanded accordingly.' 
+        },
+        { 
+            text: 'Reeducation program', 
+            suit: '0',
+            value: '',
+            tip: 'Draw three cards, put 2 cards from your hand facedown on top of their decks.' 
+        },
+        { 
+            text: 'Detour',
+            suit: '0',
+            value: '',
+            tip: 'Move a troop or tactics card on your own side into a different spot or discard it.' 
+        },
+        { 
+            text: 'Unfortunate accident', 
+            suit: '0',
+            value: '',
+            tip: 'Take any card from an unclaimed circle on the opponents side and discard it.' 
+        },
+        { 
+            text: 'We have cookies!',
+            suit: '0',
+            value: '',
+            tip: 'Take a troop card from an unclaimed circle on the opponents side and put it into an empty slot on your own side' 
+        }
+    ];
+
+    tactics.forEach(t => {
+        let card = template.content.cloneNode(true);
+        card.querySelector("div.card").classList.add(`suit-${t.suit}`, 'tactic');
+
+        card.querySelectorAll("span.edge-center").forEach(e => {
+            e.textContent = t.value;
+        });
+
+        card.querySelector("div.card-text").textContent = t.text;
+        wrapper.appendChild(card);
+    });
 </script>
