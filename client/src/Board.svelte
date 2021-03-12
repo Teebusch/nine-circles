@@ -1,13 +1,13 @@
 <script type="ts"> 
 
 import { onMount } from 'svelte';
-import Slot from './components/Slot.svelte'
+import Stack from './components/Stack.svelte'
 import Message from './components/Message.svelte'
 import Deck from './components/Deck.svelte'
 import Flag from './components/Flag.svelte'
 import Hand from './components/Hand.svelte'
 import Discard from './components/Discard.svelte';
-import type { GameState } from './Game';
+import type { GameState, Slot } from './Game';
 
 export let client;
 
@@ -25,11 +25,12 @@ let selectedSlot = null;
 
 $: { message = `Selected card ${ selectedCard }`; }
 
-function isAvailable(s: Slot): boolean {
+let availableSlots: Array<Boolean> 
+$: availableSlots = G.slots.map((s: Slot) => {
     return selectedCard !== null && 
         !s.won && 
         s.cards[ctx.currentPlayer].length < s.maxCards;
-}
+});
 
 function selectSlot(slotIdx: number) {
     if (selectedCard !== null) {
@@ -63,7 +64,7 @@ function drawTroop(e) {
 
     <div class="p1">
         {#each G.slots as s}
-        <Slot />
+        <Stack />
         {/each}
     </div>
     <div class="flags">
@@ -73,10 +74,10 @@ function drawTroop(e) {
     </div>
     <div class="p2">
         {#each G.slots as s, id}
-        <Slot 
+        <Stack 
             cards = { s.cards[ctx.currentPlayer] } 
-            available = { (s) => isAvailable(s) }
-            on:click = { () => { if (isAvailable(s)) selectSlot(id) } } 
+            available = { availableSlots[id] }
+            on:click = { () => { if (availableSlots[id]) selectSlot(id) } } 
         />
         {/each}
     </div>
@@ -91,7 +92,6 @@ function drawTroop(e) {
 <style>
 
 .board-wrapper {
-    max-width: 100vw;
     padding: 1vmax;
     display: grid;
     grid-template-columns: var(--card-w) auto;

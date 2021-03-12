@@ -3,7 +3,7 @@ import type { Ctx, Game } from "boardgame.io";
 import type { Stack } from './cards'
 import { troops, tactics } from './cards'
 
-interface Slot {
+export interface Slot {
     cards: [Stack, Stack];   // cards played into slot by each player
     maxCards: number;  // number of cards per side, may be modified by tactics 
     won: boolean;   // has the slot been won?
@@ -11,7 +11,7 @@ interface Slot {
     scoringFunc: string;  // name of scoring function in lieu of a reference, b/c G must be serialisable
 }
 
-interface Player {
+export interface Player {
     hand: Stack;
 }
 

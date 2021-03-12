@@ -1,10 +1,10 @@
 <script lang="ts">
-import Slot from './Slot.svelte';
+import Stack from './Stack.svelte';
 
 export let cards = [];
 </script>
 
-<Slot {cards}/>  
+<Stack {cards}/>  
 
 <style>
 .discard .card {
