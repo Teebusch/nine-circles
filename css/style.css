@@ -179,7 +179,8 @@ body {
 }
 
 .hand > .card:hover {
-    transform: scale(1.1) translateY(-15%);
+    box-shadow: 0 2em 1em rgba(0, 0, 0, 0.3);
+    transform: scale(1.1) translateY(-2em);
 }
 
 .hand .card.selected {
@@ -187,5 +188,6 @@ body {
 }
 
 .hand .card.selected:hover {
-    transform: scale(1.2) translateY(-20%);
+    box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.3);
+    transform: scale(1.1) translateY(-2em);
 }

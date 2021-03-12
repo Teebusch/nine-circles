@@ -1,15 +1,51 @@
-:root {
-    --card-w: max(7vw, 4em);
-    --card-h: calc(1.6 * var(--card-w));
-    --card-r: calc(var(--card-h) / 8); 
-    --suit0-c: rgb(236, 236, 236);
-    --suit1-c: rgb(185, 123, 187);
-    --suit2-c: rgb(67, 100, 143);
-    --suit3-c: rgb(103, 189, 192);
-    --suit4-c: rgb(50, 189, 147);
-    --suit5-c: rgb(212, 189, 89);
-    --suit6-c: rgb(212, 89, 136);
-}
+<script lang="ts">
+import type { Card } from "../cards";
+import { fade } from 'svelte/transition';
+
+const suits = ['♠', '❤', '✦', '✤', '✿', '✚'];
+
+export let card: Card;
+export let isSelected = false;
+</script>
+
+    {#if card.type == 'troop'}
+    <div class="card {`suit-${card.suit}`} {card.value ? `value-${card.value}` : ''}" class:selected={isSelected} on:click transition:fade>
+        <div class="card-image"></div>
+        <div class="edge edge-top">
+            <span class="edge-left"></span>
+            <span class="edge-center">{card.value}</span>
+            <span class="edge-right">{suits[card.suit-1]}</span>
+        </div>
+        <div class="card-text">
+        </div>
+        <div class="edge edge-bottom">
+            <span class="edge-left"></span>
+            <span class="edge-center">{card.value}</span>
+            <span class="edge-right">{suits[card.suit-1]}</span>
+        </div>
+    </div>
+    {:else if card.type == 'tactic'}
+    <div class="card tactic { card.suit ? `suit-${card.suit}`: '' }" class:selected={isSelected} on:click transition:fade>
+        <div class="card-image"></div>
+        <div class="edge edge-top">
+            <span class="edge-left"></span>
+            <span class="edge-center">{ card.valueText ? card.valueText : '' }</span>
+            <span class="edge-right"></span>
+        </div>
+        <div class="card-text">
+            { card.text }
+        </div>
+        <div class="edge edge-bottom">
+            <span class="edge-left"></span>
+            <span class="edge-center">{ card.valueText ? card.valueText : '' }</span>
+            <span class="edge-right"></span>
+        </div>
+    </div>
+    {/if}
+
+
+<style>
+
 
 .card {
     display: flex;
@@ -21,9 +57,10 @@
     box-shadow: 0 0 0.3em rgba(0, 0, 0, 0.4), 0 0 3em rgba(0, 0, 0, 0.2);
     background: rgb(180, 178, 178);
     text-align: center;
-    position: relative;
     color: rgb(255, 255, 255);
     line-height: normal;
+    cursor: pointer;
+    user-select: none;
 }
 
 .card.facedown {
@@ -137,6 +174,8 @@
     background-position: 800px 200px;
 }
 
-.card.tactic > .card-image {
+
+.tactic .card-image {
     background-image: none;
 }
+</style>

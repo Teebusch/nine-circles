@@ -39,21 +39,7 @@ Battle Line has five Formations, the order of which is similar to Poker:
 
 When to formations have the same rank, the one with the higher sum of card values wins. If they are still tied, the player who finished their formation last loses. The other player may claim the flag on his next turn.
 
-### Tactics Cards
-
-1. *Beelzebub* - Define color and value when circle is claimed. Each player can only play one leader per game.
-2. *Mephistopheles* - Same as above.
-3. *Shapeshifter* - Play as troop. Counts as an 8. Color is determined when circle is claimed.
-4. *3-headed monkey* - Play as troop. Determine if 1,2,3 and which color when circle is claimed. 
-5. *Mano a Mano!* - Modify a flag, so that formations do not count, only value.
-6. ** - Modify a flag, so that four cards are needed to claim it. Formations are expanded accordingly!
-7. ** - Draw three cards, put 2 cards from your hand facedown on top of their decks.
-8. ** - Move a troop or tactics card on your own side into a different spot or discard it faceup
-9. *Day off* - Take a troop or tactics card from an unclaimed circle on the opponents side and discard it (face up)
-10. *We have Cookies!* - Take a troop card from an unclaimed circle on the opponents side and put it into an empty slot on your own side
-...
-
-(discards are always visible)
+(Discards are always visible (placed face up). There can be up to two discarded cards)
 
 ### Scoring Multiple games
 
@@ -74,3 +60,4 @@ https://www.freepik.com/free-vector/trendy-tags-design-with-funny-monsters-brigh
 
 "Funny monsters" vectors [Designed by Freepik](http://www.freepik.com)
 
+<a href='https://www.freepik.com/vectors/party'>Party vector created by macrovector - www.freepik.com</a>
