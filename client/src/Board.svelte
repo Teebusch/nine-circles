@@ -1,6 +1,4 @@
 <script type="ts"> 
-
-import { onMount } from 'svelte';
 import Stack from './components/Stack.svelte'
 import Message from './components/Message.svelte'
 import Deck from './components/Deck.svelte'
@@ -25,10 +23,10 @@ let selectedSlot = null;
 
 $: { message = `Selected card ${ selectedCard }`; }
 
-let availableSlots: Array<Boolean> 
-$: availableSlots = G.slots.map((s: Slot) => {
+let slotAvailable: Array<boolean> 
+$: slotAvailable = G.slots.map((s: Slot) => {
     return selectedCard !== null && 
-        !s.won && 
+        s.claimedBy === null && 
         s.cards[ctx.currentPlayer].length < s.maxCards;
 });
 
@@ -76,8 +74,8 @@ function drawTroop(e) {
         {#each G.slots as s, id}
         <Stack 
             cards = { s.cards[ctx.currentPlayer] } 
-            available = { availableSlots[id] }
-            on:click = { () => { if (availableSlots[id]) selectSlot(id) } } 
+            available = { slotAvailable[id] }
+            on:click = { () => { if (slotAvailable[id]) selectSlot(id) } } 
         />
         {/each}
     </div>

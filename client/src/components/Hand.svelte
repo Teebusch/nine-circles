@@ -10,7 +10,7 @@ export let cards = [];
 export let selected = null;
 </script>
 
-<div class="hand" transition:fade>
+<div class="hand">
     {#each cards as card, idx}
     <Card {card} isSelected={ selected === idx } on:click={ () => clickCard(idx) } />
     {/each}
