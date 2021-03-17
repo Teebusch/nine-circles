@@ -12,7 +12,7 @@ export let selected = null;
 
 <div class="hand">
     {#each cards as card, idx}
-    <Card {card} isSelected={ selected === idx } on:click={ () => clickCard(idx) } />
+    <Card {card} selected={ selected === idx } on:click={ () => clickCard(idx) } />
     {/each}
 </div>
 

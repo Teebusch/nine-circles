@@ -48,6 +48,11 @@ function drawTroop(e) {
     client.moves.drawTroop();
 }
 
+function pass(e) {
+    message = `Passing`
+    client.moves.pass();
+}
+
 </script>
 
 <div class="board-wrapper">
@@ -80,6 +85,7 @@ function drawTroop(e) {
         {/each}
     </div>
     <Message { message } />
+    <button on:click={ pass }>Pass</button>
     <Hand 
         cards = { G.players[ctx.currentPlayer].hand } 
         bind:selected = { selectedCard } 
@@ -88,6 +94,11 @@ function drawTroop(e) {
 
 
 <style>
+
+button {
+    background-color: cadetblue;
+    border-radius: 1rem;
+}
 
 .board-wrapper {
     padding: 1vmax;
@@ -139,6 +150,4 @@ function drawTroop(e) {
     flex-direction: column;
     justify-content: center;
 }
-
-
 </style>

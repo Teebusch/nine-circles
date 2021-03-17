@@ -10,7 +10,6 @@ export let cards = [];
 .discard .card {
     transform-origin: bottom left;
 }
-
 .discard .card:nth-child(1) {
     transform: rotate(-1deg) translateY(calc(var(--card-h) * (-1/4)));
 }

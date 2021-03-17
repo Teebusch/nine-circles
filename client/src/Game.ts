@@ -1,17 +1,19 @@
 
 import type { Ctx } from "boardgame.io";
 import type { Stack } from './cards'
-import { troops, tactics } from './cards'
-import { playCard, claimCircles, drawTroop, drawTactic } from './moves'
+import { Troops, Tactics } from './cards'
+import { startTurn, playCard, claimCircles, drawTroop, drawTactic, pass } from './moves'
 
 export interface Player {
-    hand: Stack
+    hand: Stack;
+    nPlayedTactics: number;
+    nPlayedLeaders: number;
 }
 export interface Slot {
     cards: [Stack, Stack];    // cards played into slot by each player
     maxCards: number;         // number of cards per side, may be modified by tactics 
     claimedBy: null | 0 | 1;  // has the slot been won? If not null, If won, winner's id.
-    scoringFunc: string;      // name of scoring function, can be modified by tactics
+    scoringFunc?: string;      // name of scoring function, can be modified by tactics
 }
 export interface GameState {
     players: { [key: string]: Player } ;
@@ -22,24 +24,31 @@ export interface GameState {
 }
 
 function setup (ctx: Ctx): GameState {
-    let deck_troops = ctx.random.Shuffle(troops);
-    let deck_tactics = ctx.random.Shuffle(tactics);
+    let troops = ctx.random.Shuffle(Troops);
+    let tactics = ctx.random.Shuffle(Tactics);
 
     const slot: Slot = {
         cards: [ [], [] ],  
         maxCards: 3,          
-        claimedBy: null,  
-        scoringFunc: 'default'
+        claimedBy: null
     }
 
     return { 
         players: {
-            '0': { hand: deck_troops.splice(0, 7) }, 
-            '1': { hand: deck_troops.splice(0, 7) } 
+            '0': { 
+                hand: troops.splice(0, 7),
+                nPlayedTactics: 0,
+                nPlayedLeaders: 0
+            }, 
+            '1': { 
+                hand: troops.splice(0, 7),
+                nPlayedTactics: 0,
+                nPlayedLeaders: 0
+            } 
         },
         slots: Array(9).fill({...slot}),
-        troops: deck_troops,
-        tactics: deck_tactics,
+        troops: troops,
+        tactics: tactics,
         discarded: []
     }
 }
@@ -48,23 +57,22 @@ export const NineCircles = {
     setup: setup,
     
     turn: {
-        onBegin: (G, ctx) => {
-            ctx.events.setStage('playCard')
-        },
+        onBegin: startTurn,
 
         stages: {
             playCard: {
-                moves: { playCard },
+                moves: { playCard, pass },
                 next: 'claimCircles',
             },
             claimCircles: {
-                moves: { claimCircles },
+                moves: { claimCircles, pass },
                 next: 'drawCard'
             },
             drawCard: {
                 moves: { 
                     drawTactic: { move: drawTactic, undoable: false },
-                    drawTroop: { move: drawTroop, undoable: false }
+                    drawTroop: { move: drawTroop, undoable: false },
+                    pass: { move: pass }
                 }
             }
         }

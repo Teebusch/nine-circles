@@ -45,11 +45,12 @@ When to formations have the same rank, the one with the higher sum of card value
 
 - Winner gets 5 points, loser gets as many points as flags claimed.
 - Winner begins the next game.
+
 ### Variant
 
 Claim flages at *beginning* of turn.
 
-## Other Monster images? 
+## Other Monster images?
 
 https://www.freepik.com/free-vector/funny-monsters-set_6438630.htm
 

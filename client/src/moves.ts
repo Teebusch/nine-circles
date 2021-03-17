@@ -4,31 +4,67 @@ import type { Ctx } from 'boardgame.io';
 import type {GameState, Slot } from './Game'
 import type { Stack } from './cards'
 
-// Moves the active player can make
-// There is a fixed order: (1) play a card, (2) claim circles, (3) draw a new card
+// Moves the active player can make. There is a fixed order: 
+// (1) play a card, (2) claim circles, (3) draw a new card
+// under sime circumstances the player can/must also pass
+// Not all stages will always be possible
+
+function startTurn (G: GameState, ctx: Ctx): void {
+    ctx.events.setStage('playCard')
+}
+
+function pass (F: GameState, ctx: Ctx): void | string {
+    const stage: string = ctx.activePlayers[ctx.currentPlayer];
+    switch (stage) {
+        case 'playCard':
+            // If there are no cards in hand, or only unplayable cards 
+            // in hand, may pass playCard stage.
+            if (true) {
+                ctx.events.endStage();
+                break;
+            } else {
+                return INVALID_MOVE;
+            }
+        case 'claimCircles':
+            // If there are no cicrles to be claimed, or they don't want
+            // to claim any claimable circles, player may pass.
+            if (true) {
+                ctx.events.endStage();  
+                break;
+            } else {
+                return INVALID_MOVE;
+            }
+            case 'drawCard':
+            // If there are no cards left to draw, player may pass.
+            if (true) {
+                ctx.events.endStage();
+                break; 
+            } else {
+                return INVALID_MOVE;
+            }
+        default:
+            return INVALID_MOVE;
+    } 
+}
 
 // Play a card from the hand onto one of the 9 Slots 
 // or -for certain tactics cards- use the card's effect.
 function playCard (G: GameState, ctx: Ctx, cardIdx: number, slotIdx: number): void | typeof INVALID_MOVE {
     const handSize = G.players[ctx.currentPlayer].hand.length
-    if (handSize === 0) {
-        // if there are no cards in hand, end stage immediately
-        // ToDo: Hand might consist of unplayable cards only...
-        ctx.events.endStage()
-    } else if (slotIdx >= 0 && slotIdx <= handSize) {
+    if (handSize === 0 || cardIdx > handSize-1 || cardIdx < 0) {
+        return INVALID_MOVE
+    } else if (G.slots[slotIdx].claimedBy === null) {
         const card = G.players[ctx.currentPlayer].hand.splice(cardIdx, 1)[0];
         G.slots[slotIdx].cards[ctx.currentPlayer].push(card);
         ctx.events.endStage();
-    } else {
-        return INVALID_MOVE
     }
 }
 
+
 // Claim any number of won circles 
 function claimCircles (G: GameState, ctx: Ctx, circleIdx: number): void | typeof INVALID_MOVE {
-    G.slots.forEach((s, i) {
-        // ...
-    });
+    G.slots = G.slots.map(s => ({ ...s, score: scoreSlot(s, s.scoringFunc) }));
+
     if (checkGameEnd(G, ctx)){
         ctx.events.endGame();
     } else {
@@ -36,30 +72,28 @@ function claimCircles (G: GameState, ctx: Ctx, circleIdx: number): void | typeof
     }
 }
 
+
 // Draw a card from either the 'troops' or 'tactics' deck (if available)
+const drawTroop = (G, ctx) => drawCard(G, ctx, 'troops')
+const drawTactic = (G, ctx) => drawCard(G, ctx, 'tactics')
+
 function drawCard (G: GameState, ctx: Ctx, deck: string): void | typeof INVALID_MOVE {
     if (G[deck].length > 0) {
         const card = G[deck].pop();
-        G.players[ctx.currentPlayer].hand.unshift(card);
+        G.players[ctx.currentPlayer].hand.push(card);
         ctx.events.endStage()
-    } else if (G.tactics.length === 0 && G.troops.length === 0) {
-        // if both decks are empty, skip the stage
+    } else if (G.tactics.length == 0 && G.troops.length == 0) {
         ctx.events.endStage();
     } else {
         return INVALID_MOVE;
     }
 }
 
-// wrappers for drawCard
-const drawTroop = (G, ctx) => drawCard(G, ctx, 'troops')
-const drawTactic = (G, ctx) => drawCard(G, ctx, 'tactics')
 
-
-// Determine if game end condition is reached.
+// Determine if a player has won the game
 // Game end is checked whenever a circle is claimed.
-// Game ends immediately if player has won 5 total or 3 adjecent circles
+// Game ends immediately if a player has won 5 total or 3 adjacent circles
 function checkGameEnd (G: GameState, ctx: Ctx): void | number  {
-
     let total = {};
     let adjacent = {};
 
@@ -86,8 +120,30 @@ interface ScoringFunc {
     (stack: Stack): [4 | 3 | 2 | 1 | 0, number];
 }
 
-let score_default: ScoringFunc;
-let score_sum: ScoringFunc;
+let scoreDefault: ScoringFunc;
+let scoreRanks: ScoringFunc;
+
+scoreDefault = function(stack) {
+
+    let scr_formations: number = 0;
+    let scr_ranks: number = sumRanks(stack);
+
+    if (is_straight && is_flush) {
+        scr_formations = 4;
+    } else if (is_onekind) {
+        scr_formations = 3;
+    } else if (is_flush) {
+        scr_formations = 2;
+    } else if (is_straight) {
+        scr_formations = 1;
+    }
+   
+    return [scr_formations, scr_ranks];
+}
+
+scoreRanks = function(stack) {
+    return [0, sumRanks(stack)];
+}
 
 // Straight (consecutive numbers)
 function is_straight(stack: Stack): boolean {
@@ -107,39 +163,11 @@ function is_onekind(stack: Stack): Boolean {
     return false;
 }
 
-// Sum of card values
-// used when no formation or as tie breaker
-function sum_values(stack: Stack): number {
-    let value = stack
-    .map(c => c.value)
-    .map(e => Array.isArray(e) ? Math.max(...e) : e)
-    .reduce((acc, val) => acc + val, 0);
-    return 0;
-}
-
-score_default = function(stack) {
-
-    let scr_frm: number = 0;
-    let scr_val: number = 0;
-
-    if (is_straight && is_flush) {
-        scr_frm = 4;
-    } else if (is_onekind) {
-        scr_frm = 3;
-    } else if (is_flush) {
-        scr_frm = 2;
-    } else if (is_straight) {
-        scr_frm = 1;
-    }
-
-    scr_val = sum_values(stack)
-    
-    return [scr_frm, scr_val];
-}
-
-score_sum = function(stack) {
-    return [0, 0];
+// Sum of card ranks, used when no valid formation or as tie breaker
+function sumRanks(stack: Stack): number {
+    let value = stack.map(c => c.rank).reduce((acc, val) => acc + val, 0);
+    return value;
 }
 
 
-export { playCard, claimCircles, drawTroop, drawTactic }
+export { startTurn, playCard, claimCircles, drawTroop, drawTactic, pass }

@@ -2,34 +2,45 @@
 import type { Card } from "../cards";
 import { fade } from 'svelte/transition';
 
+export let card: Card;
+export let selected = false;
+
 const suits = ['♠', '❤', '✦', '✤', '✿', '✚'];
 
-export let card: Card;
-export let isSelected = false;
+const rank = card.rank;
+
+let suit: number; 
+if (card.suit) {
+    suit = Array.isArray(card.suit) ? 123456 : card.suit;
+} else {
+    suit = 0;
+}
+
 </script>
 
     {#if card.type == 'troop'}
-    <div class="card {`suit-${card.suit}`} {card.value ? `value-${card.value}` : ''}" class:selected={isSelected} on:click transition:fade>
+    <div class="card {`suit-${suit}`} { rank ? `rank-${rank}` : '' }" class:selected on:click transition:fade>
         <div class="card-image"></div>
         <div class="edge edge-top">
             <span class="edge-left"></span>
-            <span class="edge-center">{card.value}</span>
-            <span class="edge-right">{suits[card.suit-1]}</span>
+            <span class="edge-center">{rank}</span>
+            <span class="edge-right">{ suits[suit-1] }</span>
         </div>
         <div class="card-text">
         </div>
         <div class="edge edge-bottom">
             <span class="edge-left"></span>
-            <span class="edge-center">{card.value}</span>
-            <span class="edge-right">{suits[card.suit-1]}</span>
+            <span class="edge-center">{rank}</span>
+            <span class="edge-right">{ suits[suit-1] }</span>
         </div>
     </div>
+
     {:else if card.type == 'tactic'}
-    <div class="card tactic { card.suit ? `suit-${card.suit}`: '' }" class:selected={isSelected} on:click transition:fade>
+    <div class="card tactic {`suit-${suit}`}" class:selected on:click transition:fade>
         <div class="card-image"></div>
         <div class="edge edge-top">
             <span class="edge-left"></span>
-            <span class="edge-center">{ card.valueText ? card.valueText : '' }</span>
+            <span class="edge-center">{ card.rankText ? card.rankText : '' }</span>
             <span class="edge-right"></span>
         </div>
         <div class="card-text">
@@ -37,15 +48,13 @@ export let isSelected = false;
         </div>
         <div class="edge edge-bottom">
             <span class="edge-left"></span>
-            <span class="edge-center">{ card.valueText ? card.valueText : '' }</span>
+            <span class="edge-center">{ card.rankText ? card.rankText : '' }</span>
             <span class="edge-right"></span>
         </div>
     </div>
     {/if}
 
-
 <style>
-
 
 .card {
     display: flex;
@@ -99,9 +108,6 @@ export let isSelected = false;
     mix-blend-mode: multiply;   
 }
 
-.card.suit-0 {
-    background-color:var(--suit0-c);
-}
 .card.suit-1 {
     background-color:var(--suit1-c);
 }
@@ -120,7 +126,12 @@ export let isSelected = false;
 .card.suit-6 {
     background-color: var(--suit6-c);
 }
-.card.suit-wild {
+/* 0 is used for cards without a suit (some tactics) */
+.card.suit-0 {
+    background-color:var(--suit0-c);
+}
+/* 123456 is used for cards with wildcard suit (some tactics) */
+.card.suit-123456 {
     background-image: linear-gradient(to right bottom,
      var(--suit1-c), var(--suit2-c), var(--suit3-c), var(--suit4-c), var(--suit5-c), var(--suit6-c));
 }
@@ -143,38 +154,36 @@ export let isSelected = false;
     border-radius: var(--card-r);
 }
 
-.value-1 .card-image {
+.rank-1 .card-image {
     background-position: 0 0;
 }
-.value-2 .card-image {
+.rank-2 .card-image {
     background-position: 200px 0;
 }
-.value-3 .card-image {
+.rank-3 .card-image {
     background-position: 400px 0;
 }
-.value-4 .card-image {
+.rank-4 .card-image {
     background-position: 600px 0px;
 }
-.value-5 .card-image {
+.rank-5 .card-image {
     background-position: 800px 0px;
 }
-.value-6 .card-image {
+.rank-6 .card-image {
     background-position: 0px 200px;
 }
-.value-7 .card-image {
+.rank-7 .card-image {
     background-position: 200px 200px;
 }
-.value-8 .card-image {
+.rank-8 .card-image {
     background-position: 400px 200px;
 }
-.value-9 .card-image {
+.rank-9 .card-image {
     background-position: 600px 200px;
 }
-.value-10 .card-image {
+.rank-10 .card-image {
     background-position: 800px 200px;
 }
-
-
 .tactic .card-image {
     background-image: none;
 }
