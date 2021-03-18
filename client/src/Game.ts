@@ -2,7 +2,7 @@
 import type { Ctx } from "boardgame.io";
 import type { Stack } from './cards'
 import { Troops, Tactics } from './cards'
-import { startTurn, playCard, claimCircles, drawTroop, drawTactic, pass } from './moves'
+import { startTurn, playCard, claimCircle, drawTroop, drawTactic, pass } from './moves'
 
 export interface Player {
     hand: Stack;
@@ -57,7 +57,9 @@ export const NineCircles = {
     setup: setup,
     
     turn: {
-        onBegin: startTurn,
+        activePlayers: { 
+            currentPlayer: 'playCard' 
+        },
 
         stages: {
             playCard: {
@@ -65,7 +67,7 @@ export const NineCircles = {
                 next: 'claimCircles',
             },
             claimCircles: {
-                moves: { claimCircles, pass },
+                moves: { claimCircle, pass },
                 next: 'drawCard'
             },
             drawCard: {

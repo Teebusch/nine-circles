@@ -99,7 +99,7 @@ if (card.suit) {
 }
 
 .edge-bottom {
-    transform: rotate(180deg);
+    /* transform: rotate(180deg); */
 }
 
 .card-text {

@@ -13,6 +13,10 @@ let G: GameState;
 $: G = $client.G;
 $: ctx = $client.ctx;
 
+// use this until figured out multiplayer
+$: pSelf = ctx.currentPlayer;
+$: pOther = pSelf == 0 ? 1 : 0;
+
 const messages = [
     "<h2>It's your turn!</h2> You must play a card from your hand."
 ];
@@ -27,15 +31,20 @@ let slotAvailable: Array<boolean>
 $: slotAvailable = G.slots.map((s: Slot) => {
     return selectedCard !== null && 
         s.claimedBy === null && 
-        s.cards[ctx.currentPlayer].length < s.maxCards;
+        s.cards[pSelf].length < s.maxCards;
 });
 
-function selectSlot(slotIdx: number) {
+function selectSlot(slotId: number) {
     if (selectedCard !== null) {
-        message = `Selected slot ${ slotIdx }`
-        client.moves.playCard(selectedCard, slotIdx)
+        message = `Selected slot ${ slotId }`;
+        client.moves.playCard(selectedCard, slotId);
         selectedCard = null;
     }
+}
+
+function claimCircle(circleId) {
+    message = `Claiming circle ${ circleId }`;
+    client.moves,claimCircle(circleId);
 }
 
 function drawTactic(e) {
@@ -67,18 +76,20 @@ function pass(e) {
 
     <div class="p1">
         {#each G.slots as s}
-        <Stack />
+        <Stack 
+            cards = { s.cards[pOther] }         
+        />
         {/each}
     </div>
     <div class="flags">
-        {#each G.slots as s}
-        <Flag />  
+        {#each G.slots as s, id}
+        <Flag on:click = { () => claimCircle(id) } />  
         {/each}
     </div>
     <div class="p2">
         {#each G.slots as s, id}
         <Stack 
-            cards = { s.cards[ctx.currentPlayer] } 
+            cards = { s.cards[pSelf] } 
             available = { slotAvailable[id] }
             on:click = { () => { if (slotAvailable[id]) selectSlot(id) } } 
         />
@@ -87,7 +98,7 @@ function pass(e) {
     <Message { message } />
     <button on:click={ pass }>Pass</button>
     <Hand 
-        cards = { G.players[ctx.currentPlayer].hand } 
+        cards = { G.players[pSelf].hand } 
         bind:selected = { selectedCard } 
     />
 </div>
@@ -128,9 +139,10 @@ button {
     align-items: start;
 }
 
+
 .p1 {
     transform: scaleY(-1);
-} 
+}
 
 .flags {
     grid-area: flags;

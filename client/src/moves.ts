@@ -9,10 +9,6 @@ import type { Stack } from './cards'
 // under sime circumstances the player can/must also pass
 // Not all stages will always be possible
 
-function startTurn (G: GameState, ctx: Ctx): void {
-    ctx.events.setStage('playCard')
-}
-
 function pass (F: GameState, ctx: Ctx): void | string {
     const stage: string = ctx.activePlayers[ctx.currentPlayer];
     switch (stage) {
@@ -36,8 +32,9 @@ function pass (F: GameState, ctx: Ctx): void | string {
             }
             case 'drawCard':
             // If there are no cards left to draw, player may pass.
+            //if (G.tactics.length == 0 && G.troops.length == 0) {
             if (true) {
-                ctx.events.endStage();
+                ctx.events.endTurn();
                 break; 
             } else {
                 return INVALID_MOVE;
@@ -62,7 +59,7 @@ function playCard (G: GameState, ctx: Ctx, cardIdx: number, slotIdx: number): vo
 
 
 // Claim any number of won circles 
-function claimCircles (G: GameState, ctx: Ctx, circleIdx: number): void | typeof INVALID_MOVE {
+function claimCircle (G: GameState, ctx: Ctx, circleIdx: number): void | typeof INVALID_MOVE {
     G.slots = G.slots.map(s => ({ ...s, score: scoreSlot(s, s.scoringFunc) }));
 
     if (checkGameEnd(G, ctx)){
@@ -81,9 +78,7 @@ function drawCard (G: GameState, ctx: Ctx, deck: string): void | typeof INVALID_
     if (G[deck].length > 0) {
         const card = G[deck].pop();
         G.players[ctx.currentPlayer].hand.push(card);
-        ctx.events.endStage()
-    } else if (G.tactics.length == 0 && G.troops.length == 0) {
-        ctx.events.endStage();
+        ctx.events.endTurn();
     } else {
         return INVALID_MOVE;
     }
@@ -170,4 +165,4 @@ function sumRanks(stack: Stack): number {
 }
 
 
-export { startTurn, playCard, claimCircles, drawTroop, drawTactic, pass }
+export { playCard, claimCircle, drawTroop, drawTactic, pass }
