@@ -1,6 +1,7 @@
 <script lang="ts">
 import Card from './Card.svelte';
-import { fade } from 'svelte/transition';
+import { flip } from 'svelte/animate';
+
 
 function clickCard(idx: number) {
     selected = selected === idx ? null : idx;
@@ -8,13 +9,22 @@ function clickCard(idx: number) {
 
 export let cards = [];
 export let selected = null;
+
 </script>
 
+{#if cards.length > 0}
 <div class="hand">
-    {#each cards as card, idx}
-    <Card {card} selected={ selected === idx } on:click={ () => clickCard(idx) } />
+    {#each cards as card, idx (card)}
+    <div animate:flip>
+        <Card 
+            { card } 
+            selected={ selected === idx } 
+            on:click={ () => clickCard(idx) } 
+        />
+    </div>
     {/each}
 </div>
+{/if}
 
 <style>
 .hand {
@@ -24,18 +34,16 @@ export let selected = null;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: row;
+    flex-direction: row-reverse;
     gap: calc(var(--card-w) / 6);
     background: rgba(90, 114, 107, 0.3);
     border-radius: calc(1.2 * var(--card-r));
-    transform: scale(1.1);
     width: min-content;
     height: min-content;
 }
 
 
 .hand :global(.card) {
-    position: relative;
     transition: all 200ms ease-out;
 }
 

@@ -2,7 +2,7 @@
 import Stack from './components/Stack.svelte'
 import Message from './components/Message.svelte'
 import Deck from './components/Deck.svelte'
-import Flag from './components/Flag.svelte'
+import Circle from './components/Circle.svelte'
 import Hand from './components/Hand.svelte'
 import Discard from './components/Discard.svelte';
 import type { GameState, Slot } from './Game';
@@ -16,6 +16,8 @@ $: ctx = $client.ctx;
 // use this until figured out multiplayer
 $: pSelf = ctx.currentPlayer;
 $: pOther = pSelf == 0 ? 1 : 0;
+$: stage = ctx.activePlayers[pSelf];
+$: hand = G.players[pSelf].hand;
 
 const messages = [
     "<h2>It's your turn!</h2> You must play a card from your hand."
@@ -25,7 +27,7 @@ let message = messages[0];
 let selectedCard = null;
 let selectedSlot = null;
 
-$: { message = `Selected card ${ selectedCard }`; }
+$: { message = `${ stage }, Self: ${ pSelf } Other: ${ pOther }`; }
 
 let slotAvailable: Array<boolean> 
 $: slotAvailable = G.slots.map((s: Slot) => {
@@ -36,7 +38,6 @@ $: slotAvailable = G.slots.map((s: Slot) => {
 
 function selectSlot(slotId: number) {
     if (selectedCard !== null) {
-        message = `Selected slot ${ slotId }`;
         client.moves.playCard(selectedCard, slotId);
         selectedCard = null;
     }
@@ -44,7 +45,7 @@ function selectSlot(slotId: number) {
 
 function claimCircle(circleId) {
     message = `Claiming circle ${ circleId }`;
-    client.moves,claimCircle(circleId);
+    client.moves.claimCircle(circleId);
 }
 
 function drawTactic(e) {
@@ -66,50 +67,36 @@ function pass(e) {
 
 <div class="board-wrapper">
     <div class="decks">
-        <Deck cards={ G.troops } on:click={ drawTroop } />
-        <Deck cards={ G.tactics } on:click={ drawTactic } />
+        <Deck deck="Troops" numCards={ G.troops.length } on:click={ drawTroop } />
+        <Deck deck="Tactics" numCards={ G.tactics.length } on:click={ drawTactic } />
     </div>
 
     <div class="discard">
         <Discard cards={ G.discarded } />   
     </div>
 
-    <div class="p1">
-        {#each G.slots as s}
-        <Stack 
-            cards = { s.cards[pOther] }         
-        />
-        {/each}
-    </div>
-    <div class="flags">
+    <div class="slots">
         {#each G.slots as s, id}
-        <Flag on:click = { () => claimCircle(id) } />  
+            <div class="pOther">
+                <Stack cards = { s.cards[pOther] } />
+            </div>
+            <Circle on:click = { () => claimCircle(id) } />  
+            <div class="pSelf">
+                <Stack 
+                    cards = { s.cards[pSelf] } 
+                    available = { slotAvailable[id] }
+                    on:click = { () => { if (slotAvailable[id]) selectSlot(id) } } 
+                />
+            </div>
         {/each}
     </div>
-    <div class="p2">
-        {#each G.slots as s, id}
-        <Stack 
-            cards = { s.cards[pSelf] } 
-            available = { slotAvailable[id] }
-            on:click = { () => { if (slotAvailable[id]) selectSlot(id) } } 
-        />
-        {/each}
-    </div>
-    <Message { message } />
-    <button on:click={ pass }>Pass</button>
-    <Hand 
-        cards = { G.players[pSelf].hand } 
-        bind:selected = { selectedCard } 
-    />
+
+    <Message { message } on:click={ pass } />
+    <Hand cards = { hand } bind:selected = { selectedCard } />
 </div>
 
 
 <style>
-
-button {
-    background-color: cadetblue;
-    border-radius: 1rem;
-}
 
 .board-wrapper {
     padding: 1vmax;
@@ -117,9 +104,7 @@ button {
     grid-template-columns: var(--card-w) auto;
     grid-auto-rows: max-content;
     grid-template-areas: 
-        'decks p1' 
-        'decks flags' 
-        'decks p2' 
+        'decks slots'
         '. message' 
         'discard hand';
     row-gap: 1em;
@@ -128,38 +113,36 @@ button {
     justify-content: center;
 }
 
-.p1, .flags, .p2 {
-    display: grid;
-    grid-template-columns: repeat(9, auto);
-    column-gap: calc(var(--card-w) / 6);
-    justify-items: center;
-}
-
-.p1, .p2 {
-    align-items: start;
-}
-
-
-.p1 {
-    transform: scaleY(-1);
-}
-
-.flags {
-    grid-area: flags;
-    align-items: center;
-    z-index: -1;
-}
-
-.discard {
-    grid-area: discard;
-    position: relative;
-}
-
 .decks {
     grid-area: decks;
     display: flex;
     gap: 2em;
     flex-direction: column;
     justify-content: center;
+}
+
+.slots {
+    grid-area: slots;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: 1fr min-content 1fr;
+    grid-auto-flow: column;
+    column-gap: calc(var(--card-w) / 6);
+    row-gap: calc(var(--card-h) / 10);
+    padding: calc(var(--card-h) * 0.25) 0;
+}
+
+.pOther {
+    transform: rotate(180deg);
+}
+
+:global(.pOther .card) {
+    transform: rotate(180deg);
+}
+
+.discard {
+    grid-area: discard;
 }
 </style>

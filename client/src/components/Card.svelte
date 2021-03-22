@@ -1,16 +1,30 @@
 <script lang="ts">
 import type { Card } from "../cards";
-import { fade } from 'svelte/transition';
+import { quintOut } from 'svelte/easing';
+
+
+const swoosh = function(node, params) {
+    const style = getComputedStyle(node);
+    const transform = style.transform === 'none' ? '' : style.transform;
+    return {
+        duration: 600,
+        easing: quintOut,
+        css: t => `
+            transform: ${transform} scale(${t});
+            opacity: ${t}
+        `
+    };
+};
+
+const suits = ['♠', '❤', '✦', '✤', '✿', '✚'];
 
 export let card: Card;
 export let selected = false;
 
-const suits = ['♠', '❤', '✦', '✤', '✿', '✚'];
+$: rank = card.rank;
 
-const rank = card.rank;
-
-let suit: number; 
-if (card.suit) {
+let suit;
+$: if (card.suit) {
     suit = Array.isArray(card.suit) ? 123456 : card.suit;
 } else {
     suit = 0;
@@ -19,7 +33,12 @@ if (card.suit) {
 </script>
 
     {#if card.type == 'troop'}
-    <div class="card {`suit-${suit}`} { rank ? `rank-${rank}` : '' }" class:selected on:click transition:fade>
+    <div 
+        class="card {`suit-${suit}`} { rank ? `rank-${rank}` : '' }" 
+        class:selected 
+        on:click 
+        transition:swoosh
+    >
         <div class="card-image"></div>
         <div class="edge edge-top">
             <span class="edge-left"></span>
@@ -36,7 +55,12 @@ if (card.suit) {
     </div>
 
     {:else if card.type == 'tactic'}
-    <div class="card tactic {`suit-${suit}`}" class:selected on:click transition:fade>
+    <div 
+        class="card tactic {`suit-${suit}`}" 
+        class:selected 
+        on:click 
+        transition:swoosh
+    >
         <div class="card-image"></div>
         <div class="edge edge-top">
             <span class="edge-left"></span>
@@ -70,6 +94,7 @@ if (card.suit) {
     line-height: normal;
     cursor: pointer;
     user-select: none;
+    position: relative;
 }
 
 .card.facedown {
@@ -96,10 +121,6 @@ if (card.suit) {
 .edge > .edge-center {
     font-size: min(2em, calc(var(--card-w) * .3));
     font-weight: bold;
-}
-
-.edge-bottom {
-    /* transform: rotate(180deg); */
 }
 
 .card-text {

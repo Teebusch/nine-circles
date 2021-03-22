@@ -64,18 +64,19 @@ export const NineCircles = {
         stages: {
             playCard: {
                 moves: { playCard, pass },
-                next: 'claimCircles',
+                next: 'drawCard',
             },
-            claimCircles: {
-                moves: { claimCircle, pass },
-                next: 'drawCard'
-            },
+            // claimCircles: {
+            //     moves: { claimCircle, pass },
+            //     next: 'drawCard'
+            // },
             drawCard: {
                 moves: { 
                     drawTactic: { move: drawTactic, undoable: false },
-                    drawTroop: { move: drawTroop, undoable: false },
+                    drawTroop: { move: drawTroop, undoable: false},
                     pass: { move: pass }
-                }
+                },
+                next: 'playCard'
             }
         }
     },

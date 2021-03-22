@@ -78,7 +78,7 @@ function drawCard (G: GameState, ctx: Ctx, deck: string): void | typeof INVALID_
     if (G[deck].length > 0) {
         const card = G[deck].pop();
         G.players[ctx.currentPlayer].hand.push(card);
-        ctx.events.endTurn();
+        ctx.events.endStage(); // for testing, should e endTurn normally
     } else {
         return INVALID_MOVE;
     }
