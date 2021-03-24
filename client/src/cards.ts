@@ -104,4 +104,4 @@ const Tactics: Stack = [
     }
 ];
 
-export { Troops, Tactics }
+export { Card, Stack, Troops, Tactics }

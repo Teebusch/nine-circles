@@ -1,15 +1,15 @@
 
 import { INVALID_MOVE } from 'boardgame.io/core';
 import type { Ctx } from 'boardgame.io';
-import type {GameState, Slot } from './Game'
-import type { Stack } from './cards'
+import type { GameState } from './Game'
+import type { Card, Stack } from './cards'
 
 // Moves the active player can make. There is a fixed order: 
 // (1) play a card, (2) claim circles, (3) draw a new card
 // under sime circumstances the player can/must also pass
 // Not all stages will always be possible
 
-function pass (F: GameState, ctx: Ctx): void | string {
+function pass (G: GameState, ctx: Ctx): void | string {
     const stage: string = ctx.activePlayers[ctx.currentPlayer];
     switch (stage) {
         case 'playCard':
@@ -44,23 +44,32 @@ function pass (F: GameState, ctx: Ctx): void | string {
     } 
 }
 
-// Play a card from the hand onto one of the 9 Slots 
+// Play a card from the hand onto one of the 9 circles 
 // or -for certain tactics cards- use the card's effect.
-function playCard (G: GameState, ctx: Ctx, cardIdx: number, slotIdx: number): void | typeof INVALID_MOVE {
-    const handSize = G.players[ctx.currentPlayer].hand.length
-    if (handSize === 0 || cardIdx > handSize-1 || cardIdx < 0) {
+function playCard (G: GameState, ctx: Ctx, cardId: string, circleId: number): void | typeof INVALID_MOVE {
+
+    let hand = G.players[ctx.currentPlayer].hand;
+    let card = hand.find((c) => c.id === cardId);
+    let circle = G.circles.find((c) => c.id === circleId);
+    
+    if (card && circle && !circle.winner) {
+        G.players[ctx.currentPlayer].hand = hand.filter((c) => c.id !== cardId);
+        circle.cards[ctx.currentPlayer].push(card);
+        ctx.events.endStage();        
+    } else {
         return INVALID_MOVE
-    } else if (G.slots[slotIdx].claimedBy === null) {
-        const card = G.players[ctx.currentPlayer].hand.splice(cardIdx, 1)[0];
-        G.slots[slotIdx].cards[ctx.currentPlayer].push(card);
-        ctx.events.endStage();
     }
 }
 
 
 // Claim any number of won circles 
-function claimCircle (G: GameState, ctx: Ctx, circleIdx: number): void | typeof INVALID_MOVE {
-    G.slots = G.slots.map(s => ({ ...s, score: scoreSlot(s, s.scoringFunc) }));
+function claimCircle (G: GameState, ctx: Ctx, circleId: number): void | typeof INVALID_MOVE {
+    
+    let circle = G.circles.find((c) => c.id === circleId);
+
+    // ToDo...
+    // G.circles = G.circles.map(s => ({ ...s, score: scoreSlot(s, s.scoringFunc) }));
+    circle.winner = ctx.currentPlayer;
 
     if (checkGameEnd(G, ctx)){
         ctx.events.endGame();
@@ -88,28 +97,37 @@ function drawCard (G: GameState, ctx: Ctx, deck: string): void | typeof INVALID_
 // Determine if a player has won the game
 // Game end is checked whenever a circle is claimed.
 // Game ends immediately if a player has won 5 total or 3 adjacent circles
-function checkGameEnd (G: GameState, ctx: Ctx): void | number  {
+function checkGameEnd (G: GameState, ctx: Ctx): void | string  {
     let total = {};
     let adjacent = {};
 
-    for (const s of G.slots) {
-        const id = s.claimedBy;
-        if (id !== null) {
-            total[id] = total[id] + 1 || 0;
-            if (adjacent[id]) {
-                adjacent[id] = adjacent[id] + 1 || 1;
+    for (const crc of G.circles) {
+        let p = crc.winner;
+
+        if (p) {
+            // update totals
+            total[p] = total[p] + 1 || 1;
+
+            // update adjacents
+            if (adjacent[p]) {
+                adjacent[p] = adjacent[p] + 1;
             } else {
-                adjacent = {};
+                adjacent = {}
+                adjacent[p] = 1;
             }
+
+            // check victory
+            if (adjacent[p] == 3 || total[p] == 5) {
+                return p;
+            }
+        } else {
+            adjacent = {};
         };
-        if (total[id] == 5 || adjacent[id] == 3) {
-            return id;
-        }
     };
 }
 
 
-// Scoring of slots
+// Scoring of circles
 
 interface ScoringFunc {
     (stack: Stack): [4 | 3 | 2 | 1 | 0, number];

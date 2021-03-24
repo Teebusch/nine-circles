@@ -2,10 +2,10 @@
 import Card from './Card.svelte'
 
 export let cards = [];
-export let available = false;
+export let active = false;
 </script>
 
-<div class="stack" class:empty="{cards.length === 0}" class:available on:click>
+<div class="stack" class:empty="{cards.length === 0}" class:active on:click>
     {#each cards as card (card.id)}
         <Card {card} />
     {/each}
@@ -25,24 +25,25 @@ export let available = false;
 
 .stack.empty {
     color: rgb(72, 97, 91);
-    border: 1px dashed rgb(72, 97, 91);
+    border: 1px dashed rgb(1, 15, 12);
 }
 
-.stack.available, .stack.available > :global(.card) {
+.stack.active, .stack.active > :global(.card) {
     cursor: pointer;
+    border: 1px solid rgb(43, 80, 72);
+    box-shadow: rgba(126, 235, 220, 0.1) 0 0 0.5em;
+}
+
+.stack.active:hover {
+    background: rgba(61, 204, 192, 0.2);
     box-shadow: rgba(216, 216, 214, 0.2) 0 0 0.5em;
 }
 
-.stack.available:hover {
-    background: rgba(216, 216, 214, 0.2);
-    box-shadow: rgba(216, 216, 214, 0.2) 0 0 0.5em;
-}
-
-.stack.available > :global(.card) {
+.stack.active > :global(.card) {
     transition: filter 200ms ease;
 }
 
-.stack.available:hover > :global(.card) {
+.stack.active:hover > :global(.card) {
     filter: brightness(1.2);
 }
 

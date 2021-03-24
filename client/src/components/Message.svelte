@@ -1,5 +1,9 @@
 <script lang="ts">
 
+// const messages = [
+//     "<h2>It's your turn!</h2> You must play a card from your hand."
+// ];
+
 export let message = "";
 </script>
 

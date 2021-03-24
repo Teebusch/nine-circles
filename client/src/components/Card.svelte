@@ -97,10 +97,6 @@ $: if (card.suit) {
     position: relative;
 }
 
-.card.facedown {
-    background: rgb(180, 178, 178);
-}
-
 .edge {
     border-top-left-radius: var(--card-r);
     border-top-right-radius: var(--card-r);
@@ -168,10 +164,14 @@ $: if (card.suit) {
     background-size: 500% 200%;
     mix-blend-mode: overlay;
     background: url("/img/warriors.png");
-    width: var(--card-w);
-    height: var(--card-h);
-    max-width: 200px;
-    max-height: 200px;
+    /* width: var(--card-w);
+    height: var(--card-h); */
+    width: min(200px, var(--card-w));
+    height: min(200px, var(--card-h));
+    max-width: var(--card-w);
+    max-height: var(--card-h);
+    /* max-width: 200px;
+    max-height: 200px; */
     border-radius: var(--card-r);
 }
 

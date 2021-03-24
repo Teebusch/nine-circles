@@ -65,3 +65,5 @@ https://www.freepik.com/free-vector/trendy-tags-design-with-funny-monsters-brigh
 "Funny monsters" vectors [Designed by Freepik](http://www.freepik.com)
 
 <a href='https://www.freepik.com/vectors/party'>Party vector created by macrovector - www.freepik.com</a>
+
+Ice Cavern Background by 'sceneit' from <a href="https://www.vecteezy.com/free-vector/cave">Cave Vectors by Vecteezy</a>
