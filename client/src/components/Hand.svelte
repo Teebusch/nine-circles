@@ -10,10 +10,11 @@ export let selected: CardT | null = null;
 function clickCard(clicked: CardT) {
     if(selected && selected.id === clicked.id) {
         selected = null
-    } else {
+    } else if (active) {
         selected = clicked
     }
 }
+
 </script>
 
 {#if cards.length > 0}
@@ -46,11 +47,15 @@ function clickCard(clicked: CardT) {
     height: min-content;
 }
 
-.hand.hand.active {
+.hand.active {
     /* background: rgba(174, 192, 186, 0.5); */
     box-shadow: rgba(91, 168, 158, 0.5) 0 0 1em;
 }
 
+
+.hand.active :global(.card) {
+    cursor: pointer;
+}
 
 .hand :global(.card) {
     transition: all 200ms ease-out;

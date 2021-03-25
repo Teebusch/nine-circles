@@ -45,7 +45,6 @@ export let nCards = 0;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
-        cursor: pointer;
         user-select: none;
         line-height: normal;
         transition: transform 300ms ease-out;

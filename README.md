@@ -67,3 +67,8 @@ https://www.freepik.com/free-vector/trendy-tags-design-with-funny-monsters-brigh
 <a href='https://www.freepik.com/vectors/party'>Party vector created by macrovector - www.freepik.com</a>
 
 Ice Cavern Background by 'sceneit' from <a href="https://www.vecteezy.com/free-vector/cave">Cave Vectors by Vecteezy</a>
+
+<a href='https://www.freepik.com/vectors/hand'>Hand vector created by pikisuperstar - www.freepik.com</a>
+<a href='https://www.freepik.com/vectors/background'>Background vector created by visnezh - www.freepik.com</a>
+
+<a href='https://www.freepik.com/vectors/eye'>Eye vector created by freepik - www.freepik.com</a>

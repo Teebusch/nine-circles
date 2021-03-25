@@ -2,6 +2,8 @@
 import type { Card } from "../cards";
 import { quintOut } from 'svelte/easing';
 
+export let card: Card;
+export let selected = false;
 
 const swoosh = function(node, params) {
     const style = getComputedStyle(node);
@@ -18,9 +20,6 @@ const swoosh = function(node, params) {
 
 const suits = ['♠', '❤', '✦', '✤', '✿', '✚'];
 
-export let card: Card;
-export let selected = false;
-
 $: rank = card.rank;
 
 let suit;
@@ -29,7 +28,6 @@ $: if (card.suit) {
 } else {
     suit = 0;
 }
-
 </script>
 
     {#if card.type == 'troop'}
@@ -92,7 +90,6 @@ $: if (card.suit) {
     text-align: center;
     color: rgb(255, 255, 255);
     line-height: normal;
-    cursor: pointer;
     user-select: none;
     position: relative;
 }

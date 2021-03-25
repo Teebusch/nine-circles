@@ -1,15 +1,42 @@
 <script lang="ts">
 
-// const messages = [
-//     "<h2>It's your turn!</h2> You must play a card from your hand."
-// ];
+export let message;
+export let mayPass = false;
 
-export let message = "";
+let text = ''; 
+
+$: {
+    switch (message) {
+        case 'gameOver':
+            text = 'Game over!'
+            break;
+
+        case 'playCard':
+            text = 'You must play a card from your hand (or pass).';
+            break;
+
+        case 'claimCircles':
+            text = 'You may claim one or more circles.';
+            break;
+
+        case 'drawCard':
+            text = 'You must draw a card (or pass).';
+            break;
+
+        default:
+            text = 'Waiting for your opponent to finish their move.'
+            break;
+    }
+};
+
+
 </script>
 
 <div class="message">
-    <div>{ @html message }</div>
-    <button on:click>Pass</button>
+    <div>{ @html text }</div>
+    {#if mayPass}
+        <button on:click>Pass</button>
+    {/if}
 </div>
 
 <style>

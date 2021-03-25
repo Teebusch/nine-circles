@@ -25,33 +25,11 @@ $: selectedCard = null;
 
 let message: string;
 
-// $: circleWinners = G.circles.map((c) => {
-//     if (c.winner == idSelf) {
-//          return 'self'
-//     } else if (c.winner == idOppo) {
-//         return 'opponent'
-//     } else {
-//         return null
-//     }
-// })
-
 $: {
-    switch (stage) {
-        case 'playCard':
-            message = 'You must play a card from your hand (or pass).';
-            break;
-
-        case 'claimCircles':
-            message = 'You may claim one or more circles.';
-            break;
-
-        case 'drawCard':
-            message = 'You must draw a card (or pass).';
-            break;
-
-        default:
-            message = 'Waiting for your opponent to finish their move.'
-            break;
+    if (ctx.gameover) {
+        message = 'gameOver';
+    } else {
+        message = stage;
     }
 }
 
@@ -83,8 +61,9 @@ function drawTroop() {
 }
 
 function pass() {
-    // ToDo: if player may pass...
-    client.moves.pass();
+    if (G.players[idSelf].mayPass) {
+        client.moves.pass();
+    }
 }
 
 function getWinner(crc: Circle) {
@@ -123,7 +102,7 @@ function getWinner(crc: Circle) {
         {/each}
     </div>
 
-    <Message { message } on:click={ pass } />
+    <Message { message } mayPass = { G.players[idSelf].mayPass } on:click={ pass } />
     <Hand cards = { hand } bind:selected = { selectedCard } active={ stage == 'playCard' } />
 </div>
 

@@ -2,7 +2,7 @@
 import type { Ctx } from "boardgame.io";
 import type { Stack } from './cards'
 import { Troops, Tactics } from './cards'
-import { playCard, claimCircle, drawTroop, drawTactic, pass } from './moves'
+import { playCard, claimCircle, drawTroop, drawTactic, updateMayPass, pass } from './moves'
 
 export interface GameState {
     players: { [key: string]: Player } ;
@@ -15,7 +15,7 @@ export interface GameState {
 export interface Player {
     hand: Stack;
     nPlayedTactics: number;
-    nPlayedLeaders: number;
+    playedLeader: boolean;
     mayPass: boolean;
 }
 
@@ -23,9 +23,9 @@ export interface Circle {
     id: number;
     cards: [Stack, Stack];    // cards played into slot by each player
     maxCards: number;         // number of cards per side, may be modified by tactics 
-    winner: null | string;  // has the slot been won? If not null, If won, winner's id.
+    winner: null | string;    // has the slot been won? If not null, If won, winner's id.
     available: boolean;
-    scoringFunc?: string;      // name of scoring function, can be modified by tactics
+    scoringFunc?: string;     // name of scoring function, can be modified by tactics
 }
 
 
@@ -38,14 +38,14 @@ function setup (ctx: Ctx): GameState {
             '0': { 
                 hand: troops.splice(0, 7),
                 nPlayedTactics: 0,
-                nPlayedLeaders: 0,
-                mayPass: false
+                playedLeader: false,
+                mayPass: true
             }, 
             '1': { 
                 hand: troops.splice(0, 7),
                 nPlayedTactics: 0,
-                nPlayedLeaders: 0,
-                mayPass: false
+                playedLeader: false,
+                mayPass: true
             } 
         },
         circles: Array(9).fill(null).map((_, i): Circle => (
@@ -70,6 +70,11 @@ export const NineCircles = {
         activePlayers: { 
             currentPlayer: 'playCard' 
         },
+
+        // determine whether player can skip the current stage, 
+        // e.g. b/c there are no cards to play
+        // onBegin: (G, ctx) => updateMayPass(G, ctx),
+        // onMove: (G, ctx) => updateMayPass(G, ctx),
 
         stages: {
             playCard: {

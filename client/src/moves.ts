@@ -3,63 +3,126 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 import type { Ctx } from 'boardgame.io';
 import type { GameState } from './Game'
 import type { Card, Stack } from './cards'
+import { crossfade } from 'svelte/types/runtime/transition';
+
+
+// function updateMayPass (G: GameState, ctx: Ctx): void {
+//     const stage = ctx.activePlayers[ctx.currentPlayer];
+
+//     switch (stage) {
+//         case 'playCard':
+//             // If there are no cards in hand, or only unplayable cards 
+//             // in hand, the player may pass playCard stage.
+//             if (true) {
+//                 G.players[ctx.currentPlayer].mayPass = true;
+//                 break;
+//             }
+//         case 'claimCircles':
+//             // If there are no cicrles to be claimed, or they don't want
+//             // to claim any claimable circles, player may pass.
+//             if (true) {
+//                 ctx.events.endStage();  
+//                 break;
+//             } else {
+                
+//             }
+//             case 'drawCard':
+//             // If there are no cards left to draw, player may pass.
+//             //if (G.tactics.length == 0 && G.troops.length == 0) {
+//             if (true) {
+//                 ctx.events.endTurn();
+//                 break; 
+//             } else {
+                
+//             }
+//         default:   
+//     } 
+// }
+
 
 // Moves the active player can make. There is a fixed order: 
 // (1) play a card, (2) claim circles, (3) draw a new card
-// under sime circumstances the player can/must also pass
+// under some circumstances the player can/must also pass
 // Not all stages will always be possible
 
-function pass (G: GameState, ctx: Ctx): void | string {
-    const stage: string = ctx.activePlayers[ctx.currentPlayer];
-    switch (stage) {
-        case 'playCard':
-            // If there are no cards in hand, or only unplayable cards 
-            // in hand, may pass playCard stage.
-            if (true) {
-                ctx.events.endStage();
-                break;
-            } else {
-                return INVALID_MOVE;
-            }
-        case 'claimCircles':
-            // If there are no cicrles to be claimed, or they don't want
-            // to claim any claimable circles, player may pass.
-            if (true) {
-                ctx.events.endStage();  
-                break;
-            } else {
-                return INVALID_MOVE;
-            }
-            case 'drawCard':
-            // If there are no cards left to draw, player may pass.
-            //if (G.tactics.length == 0 && G.troops.length == 0) {
-            if (true) {
-                ctx.events.endTurn();
-                break; 
-            } else {
-                return INVALID_MOVE;
-            }
-        default:
-            return INVALID_MOVE;
-    } 
+
+// Pass (ski)
+
+function pass (G: GameState, ctx: Ctx): void | typeof INVALID_MOVE {
+    if (G.players[ctx.currentPlayer].mayPass) {
+        ctx.events.endStage();
+    } else {
+        return INVALID_MOVE;
+    }
 }
+
+
 
 // Play a card from the hand onto one of the 9 circles 
 // or -for certain tactics cards- use the card's effect.
 function playCard (G: GameState, ctx: Ctx, cardId: string, circleId: number): void | typeof INVALID_MOVE {
 
-    let hand = G.players[ctx.currentPlayer].hand;
+    let idSelf = ctx.currentPlayer;
+    let idOppo = idSelf == '0' ? '1' : '0';
+    let hand = G.players[idSelf].hand;
     let card = hand.find((c) => c.id === cardId);
-    let circle = G.circles.find((c) => c.id === circleId);
     
-    if (card && circle && !circle.winner) {
-        G.players[ctx.currentPlayer].hand = hand.filter((c) => c.id !== cardId);
-        circle.cards[ctx.currentPlayer].push(card);
-        ctx.events.endStage();        
-    } else {
+    if (!card) {
+        return INVALID_MOVE;
+    } 
+
+    if (card.type == 'tactic' && G.players[idSelf].nPlayedTactics > G.players[idOppo].nPlayedTactics) {
         return INVALID_MOVE
     }
+
+    const placeCard = () => {
+        let circle = G.circles.find((c) => c.id === circleId);
+
+        if(!circle || circle.winner) {
+            return INVALID_MOVE
+        }  else {
+            G.players[idSelf].hand = hand.filter((c) => c.id !== cardId);
+            circle.cards[idSelf].push(card);
+        }
+    }
+
+    const move = card.move || 'placeCard';
+    switch (move){
+        case "placeCard": 
+            if (placeCard() == INVALID_MOVE) {
+                return INVALID_MOVE;
+            };
+            break;
+
+        case "placeLeader": 
+            if(G.players[idSelf].playedLeader || placeCard() == INVALID_MOVE){
+                return INVALID_MOVE
+            } else {
+                G.players[idSelf].playedLeader = true;
+            };
+            break;
+        
+        //case "modifyScoring": return modifyScoring();  
+        //case "modifyMaxCards": modifyScoring();    
+        //case "drawThenReplace": modifyScoring();    
+        //case "drawThenReplace": modifyScoring();    
+        //case "moveOwnCard": modifyScoring();    
+        //case "discardOpponentCard": modifyScoring();    
+        //case "stealOpponentCard": modifyScoring();    
+    }
+
+    if (card.type == 'tactic') {
+        G.players[idSelf].nPlayedTactics += 1;
+    }
+    ctx.events.endStage();
 }
+
+
+// different card effects
+function placeCard(G, ctx, card, circleId) {
+
+}
+
 
 
 // Claim any number of won circles 
@@ -79,6 +142,7 @@ function claimCircle (G: GameState, ctx: Ctx, circleId: number): void | typeof I
 }
 
 
+
 // Draw a card from either the 'troops' or 'tactics' deck (if available)
 const drawTroop = (G, ctx) => drawCard(G, ctx, 'troops')
 const drawTactic = (G, ctx) => drawCard(G, ctx, 'tactics')
@@ -92,6 +156,7 @@ function drawCard (G: GameState, ctx: Ctx, deck: string): void | typeof INVALID_
         return INVALID_MOVE;
     }
 }
+
 
 
 // Determine if a player has won the game
