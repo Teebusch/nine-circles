@@ -46,19 +46,15 @@ When to formations have the same rank, the one with the higher sum of card value
 - Winner gets 5 points, loser gets as many points as flags claimed.
 - Winner begins the next game.
 
-### Variant
+### Variants
 
-Claim flages at *beginning* of turn.
-
-## Other Monster images?
-
-https://www.freepik.com/free-vector/funny-monsters-set_6438630.htm
-
-https://www.freepik.com/free-vector/trendy-tags-design-with-funny-monsters-bright-creepy-elements-creatures-with-greeting-text-beasts-celebration-halloween-concept-template-greeting-labels-invitation-card_11672026.htm#page=3&query=funny+monsters+set&position=0
+- Claim flages at *beginning* of turn.
+- Play without tactics cards
 
 ## ToDO
 
-[] What about passing on moves (e.g., not playing a card or drawing one even if possible?) It seems that passing is only allowed if playing a card / drawing a card is impossible. Passing on claiming circles might be allowed, but doesn't seeem to be a sensible move?
+- It seems that passing is only allowed if playing a card / drawing a card is impossible. 
+- Passing on claiming circles might be allowed, but doesn't seeem to be a sensible move?
 
 ## License information
 
@@ -72,3 +68,9 @@ Ice Cavern Background by 'sceneit' from <a href="https://www.vecteezy.com/free-v
 <a href='https://www.freepik.com/vectors/background'>Background vector created by visnezh - www.freepik.com</a>
 
 <a href='https://www.freepik.com/vectors/eye'>Eye vector created by freepik - www.freepik.com</a>
+
+## Other Monster images?
+
+https://www.freepik.com/free-vector/funny-monsters-set_6438630.htm
+
+https://www.freepik.com/free-vector/trendy-tags-design-with-funny-monsters-bright-creepy-elements-creatures-with-greeting-text-beasts-celebration-halloween-concept-template-greeting-labels-invitation-card_11672026.htm#page=3&query=funny+monsters+set&position=0

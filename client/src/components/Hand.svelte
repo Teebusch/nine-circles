@@ -5,13 +5,14 @@ import { flip } from 'svelte/animate';
 
 export let active = false;
 export let cards: Stack = [];
+export let playable = {}; 
 export let selected: CardT | null = null;
 
-function clickCard(clicked: CardT) {
-    if(selected && selected.id === clicked.id) {
+function clickCard(card: CardT) {
+    if(selected && selected.id === card.id) {
         selected = null
-    } else if (active) {
-        selected = clicked
+    } else if (active && playable[card.id]) {
+        selected = card
     }
 }
 
@@ -20,7 +21,7 @@ function clickCard(clicked: CardT) {
 {#if cards.length > 0}
 <div class="hand" class:active>
     {#each cards as card (card.id)}
-    <div animate:flip>
+    <div class="card-wrapper" class:active={ playable[card.id] } animate:flip >
         <Card 
             { card } 
             selected = { selected && selected.id === card.id } 
@@ -32,6 +33,11 @@ function clickCard(clicked: CardT) {
 {/if}
 
 <style>
+
+.card-wrapper:not(.active) {
+    filter: saturate(0.2) brightness(0.3);
+}
+
 .hand {
     grid-area: hand;
     justify-self: center;
@@ -68,10 +74,17 @@ function clickCard(clicked: CardT) {
 
 .hand.active :global(.card.selected) {
     box-shadow: 0 2em 1em rgba(0, 0, 0, 0.3);
-    transform: scale(1.1) translateY(-15%);
+    transform: scale(1.1);
+    animation: 1s ease-in-out 0s infinite alternate bob;
 }
 
 .hand.active :global(.card.selected:hover) {
     transform: scale(1.1) translateY(-2em);
 }
+
+@keyframes bob {
+  from { transform: scale(1.1) translateY(-0.5em) }
+  to   { transform: scale(1.1) translateY(-15%); }
+}
+
 </style>

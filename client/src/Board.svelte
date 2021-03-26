@@ -15,10 +15,11 @@ $: G = $client.G;
 $: ctx = $client.ctx;
 
 // use this until figured out multiplayer
-$: idSelf = ctx.currentPlayer;
-$: idOppo = idSelf == '0' ? '1' : '0';
-$: stage = ctx.activePlayers[idSelf];
-$: hand = G.players[idSelf].hand;
+$: pId = ctx.currentPlayer;
+$: oppId = pId == '0' ? '1' : '0';
+$: stage = ctx.activePlayers[pId];
+$: hand = G.players[pId].hand;
+$: playable = G.players[pId].playable;
 
 let selectedCard: Card | null;
 $: selectedCard = null;
@@ -35,7 +36,7 @@ $: {
 
 function selectCircle(crc: Circle) {
     if (stage == 'playCard') {
-        if (selectedCard && crc.available) {
+        if (selectedCard && !crc.winner) {
             client.moves.playCard(selectedCard.id, crc.id);
             selectedCard = null;
         }
@@ -61,14 +62,14 @@ function drawTroop() {
 }
 
 function pass() {
-    if (G.players[idSelf].mayPass) {
+    if (G.players[pId].mayPass) {
         client.moves.pass();
     }
 }
 
 function getWinner(crc: Circle) {
     if (crc.winner) {
-       return crc.winner === idSelf ? 'self' : 'opponent';
+       return crc.winner === pId ? 'self' : 'opponent';
     } else {
         return null
     } 
@@ -89,21 +90,25 @@ function getWinner(crc: Circle) {
     <div class="circles">
         {#each G.circles as crc}
             <div class="opponent">
-                <Stack cards = { crc.cards[idOppo] } />
+                <Stack cards = { crc.cards[oppId] } />
             </div>
-            <Flag wonBy = { getWinner(crc) } on:click = { () => claimCircle(crc) } active={ stage == 'claimCircles' && !getWinner(crc) } /> 
+            <Flag 
+                wonBy = { getWinner(crc) } 
+                on:click = { () => claimCircle(crc) } 
+                active = { stage == 'claimCircles' && !crc.winner && crc.claimable[pId] } 
+            /> 
             <div class="self">
                 <Stack 
-                    cards = { crc.cards[idSelf] } 
-                    active = { stage == 'playCard' && selectedCard && !getWinner(crc) }
+                    cards = { crc.cards[pId] } 
+                    active = { stage == 'playCard' && selectedCard && !crc.winner }
                     on:click = { () => selectCircle(crc) } 
                 />
             </div>
         {/each}
     </div>
 
-    <Message { message } mayPass = { G.players[idSelf].mayPass } on:click={ pass } />
-    <Hand cards = { hand } bind:selected = { selectedCard } active={ stage == 'playCard' } />
+    <Message { message } mayPass = { G.players[pId].mayPass } on:click={ pass } />
+    <Hand cards = { hand } playable = { playable } bind:selected = { selectedCard } active={ stage == 'playCard' } />
 </div>
 
 

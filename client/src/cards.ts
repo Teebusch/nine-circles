@@ -90,7 +90,7 @@ export const Tactics: Stack = [
         id: 'T7',
         type: 'tactic',
         text: 'Detour',
-        tip: 'Move a troop or tactics card on your own side into a different spot or discard it.', 
+        tip: 'Move a troop or tactics card on your own side to a different circle or discard it.', 
         move: 'moveOwnCard'
     },
     { 

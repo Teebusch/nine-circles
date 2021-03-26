@@ -2,18 +2,19 @@
 import type { Ctx } from "boardgame.io";
 import type { Stack } from './cards'
 import { Troops, Tactics } from './cards'
-import { playCard, claimCircle, drawTroop, drawTactic, updateMayPass, pass } from './moves'
+import { playCard, claimCircle, drawTroop, drawTactic, updatePlayable, pass } from './moves'
 
 export interface GameState {
-    players: { [key: string]: Player } ;
+    players: { [key: string]: Player };
     circles: Circle[];
-    discarded: Stack;
     troops: Stack;
     tactics: Stack;
+    discarded: Stack;
 }
 
 export interface Player {
     hand: Stack;
+    playable: { [key: string]: boolean },
     nPlayedTactics: number;
     playedLeader: boolean;
     mayPass: boolean;
@@ -21,10 +22,11 @@ export interface Player {
 
 export interface Circle {
     id: number;
-    cards: [Stack, Stack];    // cards played into slot by each player
+    cards: { [key: string]: Stack };    // cards played into slot by each player
+    maxScore: { [key: string]: number }
+    claimable: { [key: string]: boolean }
     maxCards: number;         // number of cards per side, may be modified by tactics 
     winner: null | string;    // has the slot been won? If not null, If won, winner's id.
-    available: boolean;
     scoringFunc?: string;     // name of scoring function, can be modified by tactics
 }
 
@@ -37,24 +39,27 @@ function setup (ctx: Ctx): GameState {
         players: {
             '0': { 
                 hand: troops.splice(0, 7),
+                playable: {},
                 nPlayedTactics: 0,
                 playedLeader: false,
-                mayPass: true
+                mayPass: false
             }, 
             '1': { 
                 hand: troops.splice(0, 7),
+                playable: {},
                 nPlayedTactics: 0,
                 playedLeader: false,
-                mayPass: true
+                mayPass: false
             } 
         },
         circles: Array(9).fill(null).map((_, i): Circle => (
             { 
                 id: i, 
-                cards: [ [], [] ], 
-                maxCards: 3, 
+                cards: { '0': [], '1': [] }, 
+                maxScore: { '0': undefined, '1': undefined }, 
+                claimable: { '0': false, '1': false }, 
                 winner: null, 
-                available: true 
+                maxCards: 3
             }
         )),
         troops: troops,
@@ -71,9 +76,12 @@ export const NineCircles = {
             currentPlayer: 'playCard' 
         },
 
+        onBegin: (G, ctx) => {
+            updatePlayable(G, ctx)
+        },
+
         // determine whether player can skip the current stage, 
         // e.g. b/c there are no cards to play
-        // onBegin: (G, ctx) => updateMayPass(G, ctx),
         // onMove: (G, ctx) => updateMayPass(G, ctx),
 
         stages: {
@@ -90,8 +98,7 @@ export const NineCircles = {
                     drawTactic: { move: drawTactic, undoable: false },
                     drawTroop: { move: drawTroop, undoable: false},
                     pass: { move: pass }
-                },
-                next: 'playCard'
+                }
             }
         }
     },
