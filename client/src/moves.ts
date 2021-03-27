@@ -122,7 +122,7 @@ const placeCard = (G, ctx, card, circleId) => {
     let hand = G.players[pId].hand;
     let circle = G.circles.find((e) => e.id === circleId);
 
-    if(!circle || circle.winner) {
+    if(!circle || circle.winner || circle.cards[pId].length == circle.maxCards) {
         return INVALID_MOVE
     }
     

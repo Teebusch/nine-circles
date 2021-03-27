@@ -124,7 +124,7 @@ function getWinner(crc: Circle) {
             <div class="self">
                 <Stack 
                     cards = { crc.cards[pId] } 
-                    active = { stage == 'playCard' && selectedCard && !crc.winner }
+                    active = { stage == 'playCard' && selectedCard && !crc.winner && crc.cards[pId].length < crc.maxCards }
                     on:click = { () => selectCircle(crc) } 
                 />
             </div>
