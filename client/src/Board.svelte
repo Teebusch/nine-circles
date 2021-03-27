@@ -7,6 +7,7 @@ import Hand from './components/Hand.svelte'
 import Discard from './components/Discard.svelte';
 import type { GameState, Circle } from './Game';
 import type { Card } from './cards';
+import App from './App.svelte';
 
 export let client;
 
@@ -25,12 +26,35 @@ let selectedCard: Card | null;
 $: selectedCard = null;
 
 let message: string;
+let mayPass = false;
 
 $: {
     if (ctx.gameover) {
         message = 'gameOver';
+        mayPass = false;
     } else {
         message = stage;
+        mayPass = false;
+
+        switch (stage) {
+            case 'playCard':
+                const plbl = Object.values(playable);
+                if (plbl.length === 0 || plbl.every((e) => !e)) {
+                    mayPass = true;
+                };
+                break;
+
+            case 'claimCircles':
+                mayPass = true;
+                // ToDO: auto-pass when there are no claimable circles.
+                break;
+                
+            case 'drawCard':
+                if (G.tactics.length == 0 && G.troops.length == 0) {
+                    mayPass = true;
+                }
+                break;
+        }
     }
 }
 
@@ -62,7 +86,7 @@ function drawTroop() {
 }
 
 function pass() {
-    if (G.players[pId].mayPass) {
+    if (mayPass) {
         client.moves.pass();
     }
 }
@@ -107,7 +131,7 @@ function getWinner(crc: Circle) {
         {/each}
     </div>
 
-    <Message { message } mayPass = { G.players[pId].mayPass } on:click={ pass } />
+    <Message { message } mayPass = { mayPass } on:click={ pass } />
     <Hand cards = { hand } playable = { playable } bind:selected = { selectedCard } active={ stage == 'playCard' } />
 </div>
 

@@ -5,39 +5,6 @@ import type { Circle, GameState } from './Game'
 import type { Card, Stack } from './cards'
 
 
-// function updateMayPass (G: GameState, ctx: Ctx): void {
-//     const stage = ctx.activePlayers[ctx.currentPlayer];
-
-//     switch (stage) {
-//         case 'playCard':
-//             // If there are no cards in hand, or only unplayable cards 
-//             // in hand, the player may pass playCard stage.
-//             if (true) {
-//                 G.players[ctx.currentPlayer].mayPass = true;
-//                 break;
-//             }
-//         case 'claimCircles':
-//             // If there are no cicrles to be claimed, or they don't want
-//             // to claim any claimable circles, player may pass.
-//             if (true) {
-//                 ctx.events.endStage();  
-//                 break;
-//             } else {
-                
-//             }
-//             case 'drawCard':
-//             // If there are no cards left to draw, player may pass.
-//             //if (G.tactics.length == 0 && G.troops.length == 0) {
-//             if (true) {
-//                 ctx.events.endTurn();
-//                 break; 
-//             } else {
-                
-//             }
-//         default:   
-//     } 
-// }
-
 
 function updatePlayable(G: GameState, ctx: Ctx): void {
 
@@ -146,9 +113,6 @@ function playCard (G: GameState, ctx: Ctx, cardId: string, circleId: number): vo
     }
     
     // scoreCircles(G, ctx);
-
-    // may always pass on claiming circles
-    plr.mayPass = true;
     ctx.events.endStage();
 }
 
@@ -244,15 +208,36 @@ function drawCard (G: GameState, ctx: Ctx, deck: string): void | typeof INVALID_
 
 // Pass (skip current stage)
 function pass (G: GameState, ctx: Ctx): void | typeof INVALID_MOVE {
-    if (G.players[ctx.currentPlayer].mayPass) {
-        if (ctx.activePlayers[ctx.currentPlayer] == 'drawCard') {
-            ctx.events.endTurn();
-        } else {
-            ctx.events.endStage();
-        }
-    } else {
-        return INVALID_MOVE;
-    }
+    const stage = ctx.activePlayers[ctx.currentPlayer];
+
+    switch (stage) {
+        // If hand is empty or contains only unplayable cards player may pass
+        case 'playCard':
+            const playable = Object.values(G.players[ctx.currentPlayer].playable);
+            if (playable.length === 0 || playable.every((e) => !e)) {
+                ctx.events.endStage();
+                break;
+            } else {
+                return INVALID_MOVE;
+            }
+
+        // Player may always pass on claiming circles
+        case 'claimCircles':
+            ctx.events.endStage();  
+            break;
+
+        // If there are no cards left to draw, player may pass on drawing cards
+        case 'drawCard':
+            if (G.tactics.length == 0 && G.troops.length == 0) {
+                ctx.events.endTurn();
+                break;                 
+            } else {
+                return INVALID_MOVE;
+            }
+
+        default: 
+            return INVALID_MOVE;
+    } 
 }
 
 

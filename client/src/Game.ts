@@ -17,7 +17,6 @@ export interface Player {
     playable: { [key: string]: boolean },
     nPlayedTactics: number;
     playedLeader: boolean;
-    mayPass: boolean;
 }
 
 export interface Circle {
@@ -42,14 +41,12 @@ function setup (ctx: Ctx): GameState {
                 playable: {},
                 nPlayedTactics: 0,
                 playedLeader: false,
-                mayPass: false
             }, 
             '1': { 
                 hand: troops.splice(0, 7),
                 playable: {},
                 nPlayedTactics: 0,
                 playedLeader: false,
-                mayPass: false
             } 
         },
         circles: Array(9).fill(null).map((_, i): Circle => (
