@@ -22,11 +22,11 @@ export interface Player {
 export interface Circle {
     id: number;
     cards: { [key: string]: Stack };    // cards played into slot by each player
-    maxScore: { [key: string]: number }
-    claimable: { [key: string]: boolean }
-    maxCards: number;         // number of cards per side, may be modified by tactics 
-    winner: null | string;    // has the slot been won? If not null, If won, winner's id.
-    scoringFunc?: string;     // name of scoring function, can be modified by tactics
+    score: { [key: string]: number }
+    winner: string | null;              // playerId who can claim, or null
+    claimedBy: null | string;           // has the slot been won? If not null, If won, winner's id.
+    maxCards: number;                   // number of cards per side, may be modified by tactics 
+    scoringFunc?: string;               // name of scoring function, can be modified by tactics
 }
 
 
@@ -53,9 +53,9 @@ function setup (ctx: Ctx): GameState {
             { 
                 id: i, 
                 cards: { '0': [], '1': [] }, 
-                maxScore: { '0': undefined, '1': undefined }, 
-                claimable: { '0': false, '1': false }, 
+                score: { '0': undefined, '1': undefined }, 
                 winner: null, 
+                claimedBy: null, 
                 maxCards: 3
             }
         )),

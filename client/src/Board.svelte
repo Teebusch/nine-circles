@@ -18,6 +18,11 @@ $: ctx = $client.ctx;
 // use this until figured out multiplayer
 $: pId = ctx.currentPlayer;
 $: oppId = pId == '0' ? '1' : '0';
+$: idString = {
+    [pId]: 'self',
+    [oppId]: 'opponent'
+};
+
 $: stage = ctx.activePlayers[pId];
 $: hand = G.players[pId].hand;
 $: playable = G.players[pId].playable;
@@ -26,7 +31,7 @@ let selectedCard: Card | null;
 $: selectedCard = null;
 
 let message: string;
-let mayPass = false;
+$: mayPass = false;
 
 $: {
     if (ctx.gameover) {
@@ -46,7 +51,10 @@ $: {
 
             case 'claimCircles':
                 mayPass = true;
-                // ToDO: auto-pass when there are no claimable circles.
+                // auto-pass when there are no claimable circles.
+                // if (G.circles.map((e) => e.winner === pId).every((e) => !e)) {
+                //     pass();
+                // }
                 break;
                 
             case 'drawCard':
@@ -60,7 +68,7 @@ $: {
 
 function selectCircle(crc: Circle) {
     if (stage == 'playCard') {
-        if (selectedCard && !crc.winner) {
+        if (selectedCard && !crc.claimedBy) {
             client.moves.playCard(selectedCard.id, crc.id);
             selectedCard = null;
         }
@@ -91,48 +99,60 @@ function pass() {
     }
 }
 
-function getWinner(crc: Circle) {
-    if (crc.winner) {
-       return crc.winner === pId ? 'self' : 'opponent';
-    } else {
-        return null
-    } 
-}
-
 </script>
 
 <div class="board-wrapper">
     <div class="decks">
-        <Deck deck="Troops" nCards={ G.troops.length } active={ stage == 'drawCard' } on:click={ drawTroop } />
-        <Deck deck="Tactics" nCards={ G.tactics.length }  active={ stage == 'drawCard' } on:click={ drawTactic } />
+        <Deck 
+            deck = "Troops" 
+            nCards = { G.troops.length } 
+            active = { stage == 'drawCard' } 
+            on:click = { drawTroop } 
+        />
+        <Deck 
+            deck = "Tactics" 
+            nCards = { G.tactics.length }  
+            active = { stage == 'drawCard' }
+            on:click = { drawTactic } 
+        />
     </div>
 
     <div class="discard">
-        <Discard cards={ G.discarded } />   
+        <Discard cards = { G.discarded } />   
     </div>
 
     <div class="circles">
-        {#each G.circles as crc}
-            <div class="opponent">
-                <Stack cards = { crc.cards[oppId] } />
-            </div>
-            <Flag 
-                wonBy = { getWinner(crc) } 
-                on:click = { () => claimCircle(crc) } 
-                active = { stage == 'claimCircles' && !crc.winner && crc.claimable[pId] } 
-            /> 
-            <div class="self">
-                <Stack 
-                    cards = { crc.cards[pId] } 
-                    active = { stage == 'playCard' && selectedCard && !crc.winner && crc.cards[pId].length < crc.maxCards }
-                    on:click = { () => selectCircle(crc) } 
-                />
-            </div>
-        {/each}
+    {#each G.circles as crc}
+        <div class="opponent">
+            <Stack cards = { crc.cards[oppId] } />
+        </div>
+        <Flag 
+            wonBy = { idString[crc.claimedBy] } 
+            on:click = { () => claimCircle(crc) } 
+            active = { stage == 'claimCircles' && !crc.claimedBy && crc.winner === pId } 
+        /> 
+        <div class="self">
+            <Stack 
+                cards = { crc.cards[pId] } 
+                active = { stage == 'playCard' && selectedCard && !crc.claimedBy && crc.cards[pId].length < crc.maxCards }
+                on:click = { () => selectCircle(crc) } 
+            />
+        </div>
+    {/each}
     </div>
 
-    <Message { message } mayPass = { mayPass } on:click={ pass } />
-    <Hand cards = { hand } playable = { playable } bind:selected = { selectedCard } active={ stage == 'playCard' } />
+    <Message 
+        { message } 
+        mayPass = { mayPass } 
+        on:click = { pass } 
+    />
+
+    <Hand 
+        cards = { hand } 
+        playable = { playable } 
+        bind:selected = { selectedCard } 
+        active={ stage == 'playCard' } 
+    />
 </div>
 
 

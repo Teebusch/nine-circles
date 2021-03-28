@@ -1,11 +1,10 @@
-
 import { INVALID_MOVE } from 'boardgame.io/core';
 import type { Ctx } from 'boardgame.io';
 import type { Circle, GameState } from './Game'
 import type { Card, Stack } from './cards'
 
 
-
+// For each players hand, determine which cards are playable
 function updatePlayable(G: GameState, ctx: Ctx): void {
 
     function isPlayable (card: Card, pId: string): boolean {   
@@ -38,7 +37,9 @@ function updatePlayable(G: GameState, ctx: Ctx): void {
 
 
 // Moves the active player can make. There is a fixed order: 
-// (1) play a card, (2) claim circles, (3) draw a new card
+// (1) play a card
+// (2) claim circles 
+// (3) draw a new card
 // Not all stages will always be possible
 // under some circumstances the player can/must also (4) pass
 
@@ -112,7 +113,8 @@ function playCard (G: GameState, ctx: Ctx, cardId: string, circleId: number): vo
             return INVALID_MOVE;  
     }
     
-    // scoreCircles(G, ctx);
+    // after playing card update circle scores and end Stage
+    scoreCircles(G, ctx);
     ctx.events.endStage();
 }
 
@@ -122,7 +124,7 @@ const placeCard = (G, ctx, card, circleId) => {
     let hand = G.players[pId].hand;
     let circle = G.circles.find((e) => e.id === circleId);
 
-    if(!circle || circle.winner || circle.cards[pId].length == circle.maxCards) {
+    if(!circle || circle.claimedBy || circle.cards[pId].length == circle.maxCards) {
         return INVALID_MOVE
     }
     
@@ -141,9 +143,9 @@ function claimCircle (G: GameState, ctx: Ctx, circleId: number): void | typeof I
     
     let crc: Circle = G.circles.find((e) => e.id === circleId);
 
-    if (crc.claimable[ctx.currentPlayer]) {
-        crc.winner = ctx.currentPlayer;
-        crc.claimable = [false, false];
+    if (crc.winner === ctx.currentPlayer) {
+        crc.claimedBy = ctx.currentPlayer;
+        crc.winner = null;
     } else {
         return INVALID_MOVE;
     }
@@ -158,16 +160,23 @@ function claimCircle (G: GameState, ctx: Ctx, circleId: number): void | typeof I
 // Determine if a player has won the game
 // Checked whenever a circle is claimed.
 // Game ends immediately if a player has won 5 total or 3 adjacent circles
-function checkGameEnd (G: GameState, ctx: Ctx): void | string  {
-    let total = {};
-    let adjacent = {};
+function checkGameEnd (G: GameState, ctx: Ctx): void | {}  {
+    let scores = {
+        total: {},
+        maxAdjacent: {},
+        winner: null
+    }
+
+    // Even if winner is found early, iterate through all circles to get the 
+    // total number of circles claimed by each player (used for scoring in multi-round games)
+    let adjacent = {}; // temporary object to keep track of number of adjacent circles 
 
     for (const crc of G.circles) {
-        let pId = crc.winner;
+        let pId = crc.claimedBy;
 
         if (pId) {
             // update totals
-            total[pId] = total[pId] + 1 || 1;
+            scores.total[pId] = scores.total[pId] + 1 || 1;
 
             // update adjacents
             if (adjacent[pId]) {
@@ -176,15 +185,26 @@ function checkGameEnd (G: GameState, ctx: Ctx): void | string  {
                 adjacent = {}
                 adjacent[pId] = 1;
             }
-
-            // check victory
-            if (adjacent[pId] == 3 || total[pId] == 5) {
-                return pId;
-            }
+            scores.maxAdjacent[pId] = Math.max(adjacent[pId], scores.maxAdjacent[pId] || 0);  
         } else {
-            adjacent = {};
+            adjacent = {}; 
         };
     };
+
+    // check victory. On a turn there will be only 1 player who reaches the winning condition 
+    Object.entries(scores.total).forEach(([id, s]) => {
+        if (s >= 5) scores.winner = id; 
+        console.log(id, s, scores.winner);
+    });
+    
+    Object.entries(scores.maxAdjacent).forEach(([id, s]) => {
+        if (s >= 3) scores.winner = id;
+        console.log(id, s, scores.winner);
+    });
+
+    if (scores.winner) {
+        return scores;
+    }
 }
 
 
@@ -223,7 +243,7 @@ function pass (G: GameState, ctx: Ctx): void | typeof INVALID_MOVE {
 
         // Player may always pass on claiming circles
         case 'claimCircles':
-            ctx.events.endStage();  
+            ctx.events.endStage(); 
             break;
 
         // If there are no cards left to draw, player may pass on drawing cards
@@ -243,32 +263,32 @@ function pass (G: GameState, ctx: Ctx): void | typeof INVALID_MOVE {
 
 // Scoring of circles
 
-// update scores of all circles, determine if any of them are claimable
+// update scores of all circles
 function scoreCircles(G: GameState, ctx: Ctx): void {
     
     // Can the circle be claimed by either player?
-    for (let crc in G.circles) {
-        if (!crc.winner) {
+    // for (let crc in G.circles) {
+    //     if (!crc.claimedBy) {
             
-            // update circle max possible score for each player
-            // ToDo...
+    //         // update circle max possible score for each player
+    //         // ToDo...
 
 
-        } 
-            crc.cards[ctx.currentPlayer].length === crc.maxCards &&
-            crc.maxScore[pId] >= crc.maxScore[pOpp]) {
+    //     } 
+    //         crc.cards[ctx.currentPlayer].length === crc.maxCards &&
+    //         crc.score[pId] >= crc.score[pOpp]) {
 
-            }
-        }
-    }
+    //         }
+    //     }
+    // }
 } 
 
 interface ScoringFunc {
     (stack: Stack): [4 | 3 | 2 | 1 | 0, number];
 }
 
-// let scoreDefault: ScoringFunc;
-// let scoreRanks: ScoringFunc;
+let scoreDefault: ScoringFunc;
+let scoreRanks: ScoringFunc;
 
 // scoreDefault = function(stack) {
 
