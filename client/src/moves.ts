@@ -2,6 +2,7 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 import type { Ctx } from 'boardgame.io';
 import type { Circle, GameState } from './Game'
 import type { Card, Stack } from './cards'
+import { create_slot } from 'svelte/internal';
 
 
 // For each players hand, determine which cards are playable
@@ -263,35 +264,71 @@ function pass (G: GameState, ctx: Ctx): void | typeof INVALID_MOVE {
 
 // Scoring of circles
 
-// update scores of all circles
+// update scores of all circles and decide if a player is winning a circle
+// A player wins the circle (and can claim it) if (1) maxCards cards played, 
+// and (2) score higher than highest possible score that opponent can still 
+// possibly get.
+// Opponents potential max score is based on information that is openly 
+// available on the board and not counting tactic cards, that is, the highest 
+// scoring combination with troop cards in troop deck and in player hands.
+// As long as the circle is unclaimed, the winner could still change due to 
+// tactics cards being played 
 function scoreCircles(G: GameState, ctx: Ctx): void {
     
-    // Can the circle be claimed by either player?
-    // for (let crc in G.circles) {
-    //     if (!crc.claimedBy) {
-            
-    //         // update circle max possible score for each player
-    //         // ToDo...
+    // iterate over all unclaimed circles where one side has played maxCards,
+    // update scores and determine if there is a winner
+    let circles = G.circles
+        .filter(crc => {
+            return !crc.claimedBy && 
+            Object.values(crc.cards).some(e => e.length === crc.maxCards);
+        })
+    
+    if (circles.length > 0) {
 
+        const unplayedTroops = Object.values(G.players)
+            .map(e => e.hand)
+            .reduce((a,b) => a.concat(b))
+            .filter(e => e.type == "troop")
+            .concat(G.troops); 
+        
+        circles.forEach(crc => {
+            // score cards on both sides
+            Object.entries(crc.cards).forEach(([pId, cards]) => {
+                // if any side has played maxCards cards, test if they can claim
+                // the circle
+                if (cards.length == crc.maxCards) {
+                    crc.scores[pId] = scoreRanks(cards); // for testing
+                } else {
+                    // find best...
+                    crc.scores[pId] = scoreRanks(cards); // for testing
+                }                
+            });
 
-    //     } 
-    //         crc.cards[ctx.currentPlayer].length === crc.maxCards &&
-    //         crc.score[pId] >= crc.score[pOpp]) {
+            const maxScore = Math.max(...Object.values(crc.scores));
 
-    //         }
-    //     }
-    // }
+            // Is a player winning the cirle?
+            Object.entries(crc.cards).forEach(([pId, cards]) => {
+
+                if (cards.length == crc.maxCards && crc.scores[pId] === maxScore) {
+                    crc.winner = pId;
+                }
+            }); 
+        });
+    }
 } 
 
-interface ScoringFunc {
-    (stack: Stack): [4 | 3 | 2 | 1 | 0, number];
+// Sum of card ranks, used when no valid formation or as tie breaker
+function scoreRanks(cards: Stack): number {
+
+    const bestRanks = cards.map((e) => {
+        let rank = e.rank;
+        return Array.isArray(rank) ? Math.max(...rank) : rank; 
+    });
+
+    return bestRanks.reduce((a, b) => a + b, 0);
 }
 
-let scoreDefault: ScoringFunc;
-let scoreRanks: ScoringFunc;
-
 // scoreDefault = function(stack) {
-
 //     let scr_formations: number = 0;
 //     let scr_ranks: number = sumRanks(stack);
 
@@ -306,10 +343,6 @@ let scoreRanks: ScoringFunc;
 //     }
    
 //     return [scr_formations, scr_ranks];
-// }
-
-// scoreRanks = function(stack) {
-//     return [0, sumRanks(stack)];
 // }
 
 // // Straight (consecutive numbers)
@@ -329,13 +362,5 @@ let scoreRanks: ScoringFunc;
 //     // stack.every(e => e.value === stack[0].value);  
 //     return false;
 // }
-
-// // Sum of card ranks, used when no valid formation or as tie breaker
-// function sumRanks(stack: Stack): number {
-//     let value = stack.map(c => c.rank).reduce((acc, val) => acc + val, 0);
-//     return value;
-// }
-
-
 
 export { playCard, claimCircle, drawTroop, drawTactic, pass, updatePlayable }

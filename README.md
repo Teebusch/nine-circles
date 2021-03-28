@@ -1,7 +1,7 @@
 
 # Nine Circles
 
-A classic capture the hill card game for two players. Duration ~ 30 minutes.
+A king of the hill card game for two players. Duration ~ 30 minutes.
 ## How to play?
 
 ### Goal

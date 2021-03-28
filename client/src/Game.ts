@@ -22,7 +22,7 @@ export interface Player {
 export interface Circle {
     id: number;
     cards: { [key: string]: Stack };    // cards played into slot by each player
-    score: { [key: string]: number }
+    scores: { [key: string]: number }
     winner: string | null;              // playerId who can claim, or null
     claimedBy: null | string;           // has the slot been won? If not null, If won, winner's id.
     maxCards: number;                   // number of cards per side, may be modified by tactics 
@@ -53,7 +53,7 @@ function setup (ctx: Ctx): GameState {
             { 
                 id: i, 
                 cards: { '0': [], '1': [] }, 
-                score: { '0': undefined, '1': undefined }, 
+                scores: { '0': undefined, '1': undefined }, 
                 winner: null, 
                 claimedBy: null, 
                 maxCards: 3
