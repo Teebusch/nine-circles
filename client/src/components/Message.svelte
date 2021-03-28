@@ -4,6 +4,7 @@ export let message;
 export let mayPass = false;
 
 let text = ''; 
+let passtext
 
 $: {
     switch (message) {
@@ -12,15 +13,15 @@ $: {
             break;
 
         case 'playCard':
-            text = 'You must play a card from your hand (or pass).';
+            text = `You must play a card from your hand${mayPass ? " or pass.": "."}`;
             break;
 
         case 'claimCircles':
-            text = 'You may claim one or more circles.';
+            text = 'You may claim one or more circles or pass.';
             break;
 
         case 'drawCard':
-            text = 'You must draw a card (or pass).';
+            text = `You must draw a card${mayPass ? " or pass.": "."}`;
             break;
 
         default:
