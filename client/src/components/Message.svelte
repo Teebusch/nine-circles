@@ -3,7 +3,6 @@
   export let mayPass = false;
 
   let text = "";
-  let passtext;
 
   $: {
     switch (message) {
@@ -22,7 +21,9 @@
         break;
 
       case "drawCard":
-        text = `You must draw a card${mayPass ? " or pass." : "."}`;
+        text = `You must draw a card${
+            mayPass ? " or pass." : "."
+        }`;
         break;
 
       default:

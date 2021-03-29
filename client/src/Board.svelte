@@ -28,6 +28,10 @@
   $: stage = ctx.activePlayers[pId];
   $: message = ctx.gameover ? "gameover" : stage;
 
+  function debugAction() {
+      pId = pId == "0" ? "1" : "0"
+  }
+
   let selectedCard: Card | null;
   let mayPass;
 
@@ -101,22 +105,22 @@
 
 <div class="board-wrapper">
   <div class="decks">
-    <Deck
+      <Deck
+        deck="Tactics"
+        nCards={G.tactics.length}
+        active={stage == "drawCard"}
+        on:click={drawTactic}
+      />
+      <Deck
       deck="Troops"
       nCards={G.troops.length}
       active={stage == "drawCard"}
       on:click={drawTroop}
-    />
-    <Deck
-      deck="Tactics"
-      nCards={G.tactics.length}
-      active={stage == "drawCard"}
-      on:click={drawTactic}
-    />
+      />
   </div>
-
+      
   <div class="discard">
-    <Discard cards={G.discarded} />
+    <Discard cards={G.discarded} on:click={ debugAction } />
   </div>
 
   <div class="circles">
@@ -154,7 +158,7 @@
 
 <style>
   .board-wrapper {
-    padding: 1vmax;
+    padding: 20px;
     display: grid;
     grid-template-columns: var(--card-w) auto;
     grid-auto-rows: max-content;
@@ -164,7 +168,6 @@
       "discard hand";
     row-gap: 1em;
     column-gap: 2em;
-    padding-top: 2em;
     justify-content: center;
   }
 
@@ -186,7 +189,6 @@
     grid-auto-flow: column;
     column-gap: calc(var(--card-w) / 6);
     row-gap: calc(var(--card-h) / 10);
-    padding: calc(var(--card-h) * 0.25) 0;
   }
 
   .opponent {

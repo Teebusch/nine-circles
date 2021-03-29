@@ -1,22 +1,8 @@
 <script lang="ts">
   import type { Card } from "../cards";
-  import { quintOut } from "svelte/easing";
 
   export let card: Card;
   export let selected = false;
-
-  const swoosh = function (node, params) {
-    const style = getComputedStyle(node);
-    const transform = style.transform === "none" ? "" : style.transform;
-    return {
-      duration: 600,
-      easing: quintOut,
-      css: (t) => `
-            transform: ${transform} scale(${t});
-            opacity: ${t}
-        `,
-    };
-  };
 
   const suits = ["♠", "❤", "✦", "✤", "✿", "✚"];
 
@@ -35,7 +21,6 @@
     class="card {`suit-${suit}`} {rank ? `rank-${rank}` : ''}"
     class:selected
     on:click
-    transition:swoosh
   >
     <div class="card-image" />
     <div class="edge edge-top">
@@ -55,7 +40,6 @@
     class="card tactic {`suit-${suit}`}"
     class:selected
     on:click
-    transition:swoosh
   >
     <div class="card-image" />
     <div class="edge edge-top">

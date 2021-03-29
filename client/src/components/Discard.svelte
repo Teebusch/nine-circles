@@ -1,13 +1,17 @@
 <script lang="ts">
-  import Stack from "./Stack.svelte";
-
   export let cards = [];
 </script>
 
-<Stack {cards} />
+<span>{ `Discarded: ${cards.length || 0}`}</span>
+
+<button on:click>Debug</button>
 
 <style>
-  .discard .card {
+  span {
+    color: white;
+  }
+
+  /* .discard .card {
     transform-origin: bottom left;
   }
   .discard .card:nth-child(1) {
@@ -15,5 +19,5 @@
   }
   .discard .card:nth-child(2) {
     transform: rotate(2deg);
-  }
+  } */
 </style>

@@ -2,6 +2,21 @@
   import Card from "./Card.svelte";
   import type { Card as CardT, Stack } from "../cards";
   import { flip } from "svelte/animate";
+  import { quintOut } from "svelte/easing";
+  import { fly } from 'svelte/transition';
+
+  const swoosh = function (node, params) {
+    const style = getComputedStyle(node);
+    const transform = style.transform === "none" ? "" : style.transform;
+    return {
+      duration: 600,
+      easing: quintOut,
+      css: (t) => `
+            transform: ${transform} scale(${t});
+            opacity: ${t}
+        `,
+    };
+  };
 
   export let active = false;
   export let cards: Stack = [];
@@ -20,7 +35,10 @@
 {#if cards.length > 0}
   <div class="hand" class:active>
     {#each cards as card (card.id)}
-      <div class="card-wrapper" class:active={playable[card.id]} animate:flip>
+      <div class="card-wrapper" class:active={playable[card.id]} animate:flip 
+        in:fly={{x: -50, duration: 500, opacity: 0.5, easing: quintOut}}
+        out:swoosh
+      >
         <Card
           {card}
           selected={selected && selected.id === card.id}
@@ -87,4 +105,5 @@
       transform: scale(1.1) translateY(-15%);
     }
   }
+
 </style>

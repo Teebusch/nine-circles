@@ -1,6 +1,6 @@
 :root {
-  --card-w: max(7vw, 7vmax);
-  --card-h: calc(1.55 * var(--card-w));
+  --card-w: 7vmax;
+  --card-h: calc(1.5 * var(--card-w));
   --card-r: calc(var(--card-h) / 8);
   --suit0-c: rgb(236, 236, 236);
   --suit1-c: rgb(185, 123, 187);

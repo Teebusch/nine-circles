@@ -19,7 +19,7 @@ function makeCards(suits: number, ranks: number): Stack {
             stack = [{ id: `${s}${r}`, type: 'troop', suit: s, rank: r }, ...stack];
         }
     }
-    return stack
+    return stack;
 }
 
 export const Troops: Stack = makeCards(6, 10);
@@ -99,7 +99,7 @@ export const Tactics: Stack = [
         text: 'Unfortunate accident', 
         tip: 'Take any card from an unclaimed circle on the opponents side and discard it.',
         move: 'discardOpponentCard'
-    }
+    },
     { 
         id: 'T9',
         type: 'tactic',

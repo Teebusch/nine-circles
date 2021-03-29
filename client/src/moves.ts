@@ -174,7 +174,8 @@ function drawCard(
     const card = G[deck].pop();
     G.players[ctx.currentPlayer].hand.push(card);
     updatePlayable(G, ctx);
-    ctx.events.endTurn();
+    //ctx.events.endTurn();
+    ctx.events.setStage('playCard')
   } else {
     return INVALID_MOVE;
   }
