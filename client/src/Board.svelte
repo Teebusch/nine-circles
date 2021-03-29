@@ -6,65 +6,62 @@ import Flag from './components/Flag.svelte'
 import Hand from './components/Hand.svelte'
 import Discard from './components/Discard.svelte';
 import type { GameState, Circle } from './Game';
+import type { Ctx } from 'boardgame.io';
 import type { Card } from './cards';
-import App from './App.svelte';
+import { afterUpdate } from 'svelte';
 
 export let client;
 
 let G: GameState;
-$: G = $client.G;
+let ctx: Ctx;
+ 
+$: G   = $client.G;
 $: ctx = $client.ctx;
 
 // use this until figured out multiplayer
-$: pId = ctx.currentPlayer;
-$: oppId = pId == '0' ? '1' : '0';
-$: idString = {
-    [pId]: 'self',
-    [oppId]: 'opponent'
-};
+$: pId      = ctx.currentPlayer;
+$: oppId    = pId == '0' ? '1' : '0';
+$: idString = { [pId]: 'self', [oppId]: 'opponent' };
 
-$: stage = ctx.activePlayers[pId];
-$: hand = G.players[pId].hand;
+$: hand     = G.players[pId].hand;
 $: playable = G.players[pId].playable;
+$: stage    = ctx.activePlayers[pId];
+$: message  = ctx.gameover ? 'gameover' : stage;
 
 let selectedCard: Card | null;
-$: selectedCard = null;
-
-let message: string;
-$: mayPass = false;
+let mayPass;
 
 $: {
     if (ctx.gameover) {
-        message = 'gameOver';
         mayPass = false;
-    } else {
-        message = stage;
-        mayPass = false;
-
+    } else {;
         switch (stage) {
             case 'playCard':
                 const plbl = Object.values(playable);
-                if (plbl.length === 0 || plbl.every((e) => !e)) {
-                    mayPass = true;
-                };
+                mayPass = (plbl.length === 0 || plbl.every((e) => !e));
                 break;
 
             case 'claimCircles':
                 mayPass = true;
-                // auto-pass when there are no claimable circles.
-                // if (G.circles.map((e) => e.winner === pId).every((e) => !e)) {
-                //     pass();
-                // }
                 break;
                 
             case 'drawCard':
-                if (G.tactics.length == 0 && G.troops.length == 0) {
-                    mayPass = true;
-                }
+                mayPass = (G.tactics.length == 0 && G.troops.length == 0);
                 break;
         }
     }
 }
+
+// auto-pass when there are no claimable circles
+// it works, but I don't think this is the idiomatic way to do it.
+afterUpdate(() => {
+    if (stage == 'claimCircles' && !G.circles.some(e => e.winner === pId && !e.claimedBy)) {
+         pass();
+    }
+});
+
+
+// Moves
 
 function selectCircle(crc: Circle) {
     if (stage == 'playCard') {
