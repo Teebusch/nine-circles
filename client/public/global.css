@@ -1,40 +1,49 @@
 :root {
-    --card-w: max(7vw, 7vmax);
-    --card-h: calc(1.55 * var(--card-w));
-    --card-r: calc(var(--card-h) / 8); 
-    --suit0-c: rgb(236, 236, 236);
-    --suit1-c: rgb(185, 123, 187);
-    --suit2-c: rgb(67, 100, 143);
-    --suit3-c: rgb(103, 189, 192);
-    --suit4-c: rgb(50, 189, 147);
-    --suit5-c: rgb(212, 189, 89);
-    --suit6-c: rgb(212, 89, 136);
+  --card-w: max(7vw, 7vmax);
+  --card-h: calc(1.55 * var(--card-w));
+  --card-r: calc(var(--card-h) / 8);
+  --suit0-c: rgb(236, 236, 236);
+  --suit1-c: rgb(185, 123, 187);
+  --suit2-c: rgb(67, 100, 143);
+  --suit3-c: rgb(103, 189, 192);
+  --suit4-c: rgb(50, 189, 147);
+  --suit5-c: rgb(212, 189, 89);
+  --suit6-c: rgb(212, 89, 136);
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-size: max(calc(var(--card-w) * .15), 6pt);
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: max(calc(var(--card-w) * 0.15), 6pt);
 }
 
-ol, ul, li, h1, h2, h3, h4, p {
-    font-size: 100%;
-    list-style: none;
+ol,
+ul,
+li,
+h1,
+h2,
+h3,
+h4,
+p {
+  font-size: 100%;
+  list-style: none;
 }
 
-h1, h2, h3, h4 {
-    padding-top: 1em;
+h1,
+h2,
+h3,
+h4 {
+  padding-top: 1em;
 }
 
 body {
-    background: rgb(2, 32, 42);
-    background-image: url('img/cave.jpg');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-    background-size: cover;
-    /* background: radial-gradient(circle, rgba(31,78,82,1) 0%, rgba(8,34,40,1) 88%); */
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    line-height: 1.5;
+  background: rgb(2, 32, 42);
+  background-image: url("img/cave.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  line-height: 1.5;
 }

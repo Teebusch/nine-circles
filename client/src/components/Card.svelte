@@ -1,84 +1,81 @@
 <script lang="ts">
-import type { Card } from "../cards";
-import { quintOut } from 'svelte/easing';
+  import type { Card } from "../cards";
+  import { quintOut } from "svelte/easing";
 
-export let card: Card;
-export let selected = false;
+  export let card: Card;
+  export let selected = false;
 
-const swoosh = function(node, params) {
+  const swoosh = function (node, params) {
     const style = getComputedStyle(node);
-    const transform = style.transform === 'none' ? '' : style.transform;
+    const transform = style.transform === "none" ? "" : style.transform;
     return {
-        duration: 600,
-        easing: quintOut,
-        css: t => `
+      duration: 600,
+      easing: quintOut,
+      css: (t) => `
             transform: ${transform} scale(${t});
             opacity: ${t}
-        `
+        `,
     };
-};
+  };
 
-const suits = ['♠', '❤', '✦', '✤', '✿', '✚'];
+  const suits = ["♠", "❤", "✦", "✤", "✿", "✚"];
 
-$: rank = card.rank;
+  $: rank = card.rank;
 
-let suit;
-$: if (card.suit) {
+  let suit;
+  $: if (card.suit) {
     suit = Array.isArray(card.suit) ? 123456 : card.suit;
-} else {
+  } else {
     suit = 0;
-}
+  }
 </script>
 
-    {#if card.type == 'troop'}
-    <div 
-        class="card {`suit-${suit}`} { rank ? `rank-${rank}` : '' }" 
-        class:selected 
-        on:click 
-        transition:swoosh
-    >
-        <div class="card-image"></div>
-        <div class="edge edge-top">
-            <span class="edge-left"></span>
-            <span class="edge-center">{rank}</span>
-            <span class="edge-right">{ suits[suit-1] }</span>
-        </div>
-        <div class="card-text">
-        </div>
-        <div class="edge edge-bottom">
-            <span class="edge-left"></span>
-            <span class="edge-center">{rank}</span>
-            <span class="edge-right">{ suits[suit-1] }</span>
-        </div>
+{#if card.type == "troop"}
+  <div
+    class="card {`suit-${suit}`} {rank ? `rank-${rank}` : ''}"
+    class:selected
+    on:click
+    transition:swoosh
+  >
+    <div class="card-image" />
+    <div class="edge edge-top">
+      <span class="edge-left" />
+      <span class="edge-center">{rank}</span>
+      <span class="edge-right">{suits[suit - 1]}</span>
     </div>
-
-    {:else if card.type == 'tactic'}
-    <div 
-        class="card tactic {`suit-${suit}`}" 
-        class:selected 
-        on:click 
-        transition:swoosh
-    >
-        <div class="card-image"></div>
-        <div class="edge edge-top">
-            <span class="edge-left"></span>
-            <span class="edge-center">{ card.rankText ? card.rankText : '' }</span>
-            <span class="edge-right"></span>
-        </div>
-        <div class="card-text">
-            { card.text }
-        </div>
-        <div class="edge edge-bottom">
-            <span class="edge-left"></span>
-            <span class="edge-center">{ card.rankText ? card.rankText : '' }</span>
-            <span class="edge-right"></span>
-        </div>
+    <div class="card-text" />
+    <div class="edge edge-bottom">
+      <span class="edge-left" />
+      <span class="edge-center">{rank}</span>
+      <span class="edge-right">{suits[suit - 1]}</span>
     </div>
-    {/if}
+  </div>
+{:else if card.type == "tactic"}
+  <div
+    class="card tactic {`suit-${suit}`}"
+    class:selected
+    on:click
+    transition:swoosh
+  >
+    <div class="card-image" />
+    <div class="edge edge-top">
+      <span class="edge-left" />
+      <span class="edge-center">{card.rankText ? card.rankText : ""}</span>
+      <span class="edge-right" />
+    </div>
+    <div class="card-text">
+      {card.text}
+    </div>
+    <div class="edge edge-bottom">
+      <span class="edge-left" />
+      <span class="edge-center">{card.rankText ? card.rankText : ""}</span>
+      <span class="edge-right" />
+    </div>
+  </div>
+{/if}
 
 <style>
-
-.card {
+  .card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -92,9 +89,9 @@ $: if (card.suit) {
     line-height: normal;
     user-select: none;
     position: relative;
-}
+  }
 
-.edge {
+  .edge {
     border-top-left-radius: var(--card-r);
     border-top-right-radius: var(--card-r);
     display: flex;
@@ -105,52 +102,60 @@ $: if (card.suit) {
     mix-blend-mode: hard-light;
     opacity: 0.9;
     padding: 0.2em 0.5em;
-}
+  }
 
-.edge-left, .edge-right {
+  .edge-left,
+  .edge-right {
     flex: 1 1 0;
-}
+  }
 
-.edge > .edge-center {
-    font-size: min(2em, calc(var(--card-w) * .3));
+  .edge > .edge-center {
+    font-size: min(2em, calc(var(--card-w) * 0.3));
     font-weight: bold;
-}
+  }
 
-.card-text {
+  .card-text {
     padding: 0 0.2em;
-    color:rgb(30, 3, 36);
-    mix-blend-mode: multiply;   
-}
+    color: rgb(30, 3, 36);
+    mix-blend-mode: multiply;
+  }
 
-.card.suit-1 {
-    background-color:var(--suit1-c);
-}
-.card.suit-2 {
+  .card.suit-1 {
+    background-color: var(--suit1-c);
+  }
+  .card.suit-2 {
     background-color: var(--suit2-c);
-}
-.card.suit-3 {
+  }
+  .card.suit-3 {
     background-color: var(--suit3-c);
-}
-.card.suit-4 {
+  }
+  .card.suit-4 {
     background-color: var(--suit4-c);
-}
-.card.suit-5 {
+  }
+  .card.suit-5 {
     background-color: var(--suit5-c);
-}
-.card.suit-6 {
+  }
+  .card.suit-6 {
     background-color: var(--suit6-c);
-}
-/* 0 is used for cards without a suit (some tactics) */
-.card.suit-0 {
-    background-color:var(--suit0-c);
-}
-/* 123456 is used for cards with wildcard suit (some tactics) */
-.card.suit-123456 {
-    background-image: linear-gradient(to right bottom,
-     var(--suit1-c), var(--suit2-c), var(--suit3-c), var(--suit4-c), var(--suit5-c), var(--suit6-c));
-}
+  }
+  /* 0 is used for cards without a suit (some tactics) */
+  .card.suit-0 {
+    background-color: var(--suit0-c);
+  }
+  /* 123456 is used for cards with wildcard suit (some tactics) */
+  .card.suit-123456 {
+    background-image: linear-gradient(
+      to right bottom,
+      var(--suit1-c),
+      var(--suit2-c),
+      var(--suit3-c),
+      var(--suit4-c),
+      var(--suit5-c),
+      var(--suit6-c)
+    );
+  }
 
-.card-image {
+  .card-image {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -170,39 +175,39 @@ $: if (card.suit) {
     /* max-width: 200px;
     max-height: 200px; */
     border-radius: var(--card-r);
-}
+  }
 
-.rank-1 .card-image {
+  .rank-1 .card-image {
     background-position: 0 0;
-}
-.rank-2 .card-image {
+  }
+  .rank-2 .card-image {
     background-position: 200px 0;
-}
-.rank-3 .card-image {
+  }
+  .rank-3 .card-image {
     background-position: 400px 0;
-}
-.rank-4 .card-image {
+  }
+  .rank-4 .card-image {
     background-position: 600px 0px;
-}
-.rank-5 .card-image {
+  }
+  .rank-5 .card-image {
     background-position: 800px 0px;
-}
-.rank-6 .card-image {
+  }
+  .rank-6 .card-image {
     background-position: 0px 200px;
-}
-.rank-7 .card-image {
+  }
+  .rank-7 .card-image {
     background-position: 200px 200px;
-}
-.rank-8 .card-image {
+  }
+  .rank-8 .card-image {
     background-position: 400px 200px;
-}
-.rank-9 .card-image {
+  }
+  .rank-9 .card-image {
     background-position: 600px 200px;
-}
-.rank-10 .card-image {
+  }
+  .rank-10 .card-image {
     background-position: 800px 200px;
-}
-.tactic .card-image {
+  }
+  .tactic .card-image {
     background-image: none;
-}
+  }
 </style>
