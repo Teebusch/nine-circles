@@ -52,6 +52,7 @@
     border-radius: var(--card-r);
     color: rgb(72, 97, 91);
     border: 1px dashed rgb(1, 15, 12);
+    position: absolute;
   }
 
   .stack.active > :global(.card) {

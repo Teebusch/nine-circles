@@ -2,21 +2,8 @@
   import Card from "./Card.svelte";
   import type { Card as CardT, Stack } from "../cards";
   import { flip } from "svelte/animate";
-  import { quintOut } from "svelte/easing";
+  import { cubicOut, elasticOut } from "svelte/easing";
   import { fly } from 'svelte/transition';
-
-  const swoosh = function (node, params) {
-    const style = getComputedStyle(node);
-    const transform = style.transform === "none" ? "" : style.transform;
-    return {
-      duration: 600,
-      easing: quintOut,
-      css: (t) => `
-            transform: ${transform} scale(${t});
-            opacity: ${t}
-        `,
-    };
-  };
 
   export let active = false;
   export let cards: Stack = [];
@@ -33,11 +20,12 @@
 </script>
 
 {#if cards.length > 0}
-  <div class="hand" class:active>
+  <div class="hand" id="hand" class:active>
     {#each cards as card (card.id)}
-      <div class="card-wrapper" class:active={playable[card.id]} animate:flip 
-        in:fly={{x: -50, duration: 500, opacity: 0.5, easing: quintOut}}
-        out:swoosh
+      <div class="card-wrapper" class:active={playable[card.id]} 
+        animate:flip={{easing: elasticOut, duration: 1000}}
+        in:fly={{x: -90, duration: 700, opacity: 0.5, easing: elasticOut}}
+        out:fly={{y: -90, duration: 400, opacity: 0, delay: -400}}
       >
         <Card
           {card}
@@ -50,28 +38,34 @@
 {/if}
 
 <style>
+
+  .card-wrapper {
+    height: var(--card-h);
+    width: var(--card-w);
+  }
   .card-wrapper:not(.active) {
-    filter: saturate(0.2) brightness(0.3);
+    filter: saturate(0.2) brightness(0.1);
   }
 
   .hand {
     grid-area: hand;
     justify-self: center;
-    padding: 0.5em;
+    padding: 0.7em;
+    box-sizing: content-box;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: row-reverse;
     gap: calc(var(--card-w) / 6);
-    background: rgba(90, 114, 107, 0.3);
+    background:rgba(2, 30, 41, 0.5);
+    box-shadow: 0 1em 1em -0.2em rgba(2, 14, 12, 0.5);
     border-radius: calc(1.2 * var(--card-r));
     width: min-content;
-    height: min-content;
+    height: var(--card-h);
   }
 
   .hand.active {
-    /* background: rgba(174, 192, 186, 0.5); */
-    box-shadow: rgba(91, 168, 158, 0.5) 0 0 1em;
+    border-bottom: 3px solid rgb(197, 240, 240);
   }
 
   .hand.active :global(.card) {

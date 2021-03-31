@@ -268,6 +268,7 @@ function scoreCircles(G: GameState, ctx: Ctx): void {
 }
 
 // Sum of card ranks, used when no valid formation or as tie breaker
+// When there's a wildcard use the max
 function scoreRanks(cards: Stack): number {
   const bestRanks = cards.map((e) => {
     let rank = e.rank;
@@ -275,6 +276,10 @@ function scoreRanks(cards: Stack): number {
   });
 
   return bestRanks.reduce((a, b) => a + b, 0);
+}
+
+function scoreFormation(cards: Stack) {
+  
 }
 
 // scoreDefault = function(stack) {

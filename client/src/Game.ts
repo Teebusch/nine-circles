@@ -59,7 +59,8 @@ function setup(ctx: Ctx): GameState {
       .map(
         (_, i): Circle => ({
           id: i,
-          cards: { "0": troops.splice(0, 1), "1": troops.splice(0, 1) },
+          // cards: { "0": troops.splice(0, 1), "1": troops.splice(0, 1) }, // for debug
+          cards: { "0": [], "1": [] },
           scores: { "0": undefined, "1": undefined },
           winner: null,
           claimedBy: null,
