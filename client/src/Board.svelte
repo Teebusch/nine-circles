@@ -26,14 +26,38 @@
   $: hand = G.players[pId].hand;
   $: playable = G.players[pId].playable;
   $: stage = ctx.activePlayers[pId];
-  $: message = ctx.gameover ? "gameover" : stage;
+
+  let message;
+  $: {
+    if (ctx.gameover) {
+      message = "gameover";
+    } else if (selectedCard && selectedCard.type == "tactic") {
+      message = `<strong>${selectedCard.text}. </strong> ${selectedCard.tip} ${ !playable[selectedCard.id] ? " You can't currently play this card." : "" }`;
+
+    } else if (stage) {
+      message = stage;
+    } else {
+      message = "wait";
+    }
+  }
 
   function debugAction() {
-      pId = pId == "0" ? "1" : "0"
+    pId = pId == "0" ? "1" : "0";
   }
 
   let selectedCard: Card | null;
   let mayPass;
+
+  // auto-pass when there are no claimable circles
+  // it works, but I don't think this is the idiomatic way to do it.
+  afterUpdate(() => {
+    if (
+      stage == "claimCircles" &&
+      !G.circles.some((e) => e.winner === pId && !e.claimedBy)
+    ) {
+      pass();
+    }
+  });
 
   $: {
     if (ctx.gameover) {
@@ -55,17 +79,6 @@
       }
     }
   }
-
-  // auto-pass when there are no claimable circles
-  // it works, but I don't think this is the idiomatic way to do it.
-  afterUpdate(() => {
-    if (
-      stage == "claimCircles" &&
-      !G.circles.some((e) => e.winner === pId && !e.claimedBy)
-    ) {
-      pass();
-    }
-  });
 
   // Moves
 
@@ -105,22 +118,22 @@
 
 <div class="board-wrapper">
   <div class="decks">
-      <Deck
-        deck="Tactics"
-        nCards={G.tactics.length}
-        active={stage == "drawCard"}
-        on:click={drawTactic}
-      />
-      <Deck
+    <Deck
+      deck="Tactics"
+      nCards={G.tactics.length}
+      active={stage == "drawCard"}
+      on:click={drawTactic}
+    />
+    <Deck
       deck="Troops"
       nCards={G.troops.length}
       active={stage == "drawCard"}
       on:click={drawTroop}
-      />
+    />
   </div>
-      
+
   <div class="discard">
-    <Discard cards={G.discarded} on:click={ debugAction } />
+    <Discard cards={G.discarded} on:click={debugAction} />
   </div>
 
   <div class="circles">
@@ -138,6 +151,7 @@
           cards={crc.cards[pId]}
           active={stage == "playCard" &&
             selectedCard &&
+            playable[selectedCard.id] &&
             !crc.claimedBy &&
             crc.cards[pId].length < crc.maxCards}
           on:click={() => selectCircle(crc)}
@@ -158,9 +172,9 @@
 
 <style>
   .board-wrapper {
-    padding: 20px;
+    padding: 20px 0px;
     display: grid;
-    grid-template-columns: var(--card-w) auto;
+    grid-template-columns: auto;
     grid-auto-rows: max-content;
     grid-template-areas:
       "decks circles"
@@ -179,6 +193,24 @@
     justify-content: center;
   }
 
+  @media (max-width: 900px) {
+    .board-wrapper {
+      grid-template-areas:
+        "circles circles"
+        "decks hand"
+        "discard message";
+    }
+    .decks {
+      flex-direction: row;
+      gap: 0.7em;
+      padding: 0.7em;
+      transform: rotate(-90deg);
+    }
+
+    .decks > :global(.deck) {
+    }
+  }
+
   .circles {
     grid-area: circles;
     display: grid;
@@ -189,6 +221,7 @@
     grid-auto-flow: column;
     column-gap: calc(var(--card-w) / 6);
     row-gap: calc(var(--card-h) / 10);
+    width: min-content;
   }
 
   .opponent {

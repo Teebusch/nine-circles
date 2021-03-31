@@ -13,7 +13,7 @@
   function clickCard(card: CardT) {
     if (selected && selected.id === card.id) {
       selected = null;
-    } else if (active && playable[card.id]) {
+    } else if (active) {
       selected = card;
     }
   }
@@ -44,7 +44,8 @@
     width: var(--card-w);
   }
   .card-wrapper:not(.active) {
-    filter: saturate(0.2) brightness(0.1);
+    filter: saturate(0) brightness(0.7);
+    /* pointer-events: none; */
   }
 
   .hand {

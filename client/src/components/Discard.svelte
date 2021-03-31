@@ -2,7 +2,7 @@
   export let cards = [];
 </script>
 
-<span>{ `Discarded: ${cards.length || 0}`}</span>
+<span>{ `${cards.length || 0}`}</span>
 
 <button on:click>Debug</button>
 

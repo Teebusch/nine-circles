@@ -156,8 +156,6 @@ export function claimCircle(
 
   if (checkGameEnd(G, ctx)) {
     ctx.events.endGame();
-  } else {
-    ctx.events.endStage();
   }
 }
 

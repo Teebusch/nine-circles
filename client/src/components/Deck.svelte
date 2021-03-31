@@ -6,14 +6,16 @@
   // make "blank" cards
 </script>
 
-<div class="deck" class:empty={nCards <= 0} on:click>
-  {#if nCards > 0}
-    <div class="top-card" class:active={active && nCards > 0}>
+<div class="deck">
+{#if nCards > 0}
+    <div class="top-card" class:active={active && nCards > 0} on:click>
       <span>{deck}</span>
       <span>{nCards}</span>
     </div>
-  {/if}
-</div>
+    {:else}
+    <div class="placeholder"></div>
+    {/if}
+  </div>
 
 <style>
   .deck {
@@ -24,7 +26,7 @@
     color: rgb(43, 43, 43);
   }
 
-  .empty {
+  .placeholder {
     background: none;
     box-shadow: none;
     border: 1px dashed rgb(72, 97, 91);

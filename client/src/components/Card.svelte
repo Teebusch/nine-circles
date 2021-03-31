@@ -102,6 +102,7 @@
     padding: 0 0.2em;
     color: rgb(30, 3, 36);
     mix-blend-mode: multiply;
+    word-wrap: break-word;
   }
 
   .card.suit-1 {

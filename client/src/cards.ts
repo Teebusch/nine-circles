@@ -104,7 +104,7 @@ export const Tactics: Stack = [
         id: 'T9',
         type: 'tactic',
         text: 'We have cookies!',
-        tip: 'Take a troop card from an unclaimed circle on the opponents side and put it into an empty slot on your own side',
+        tip: 'Take a troop card from an unclaimed circle on the opponents side and put it into an empty slot on your own side.',
         move: 'stealOpponentCard',
     }
 ];

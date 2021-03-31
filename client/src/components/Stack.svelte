@@ -28,7 +28,7 @@
     {#each cards as card (card.id)}
     <div class="card-wrapper" 
       animate:flip  
-      in:fly={{y: 50, duration: 500, opacity: 0.5, easing: quintOut}} 
+      in:fly={{y: 80, duration: 500, opacity: 0.5, easing: quintOut}} 
       out:swoosh
     >
       <Card {card} />
@@ -55,13 +55,13 @@
     position: absolute;
   }
 
-  .stack.active > :global(.card) {
+  .stack.active > .card-wrapper {
     cursor: pointer;
     box-shadow: rgba(126, 235, 220, 0.1) 0 0 0.5em;
     transition: filter 200ms ease;
   }
   
-  .stack.active:hover > :global(.card) {
+  .stack.active:hover > .card-wrapper {
     filter: brightness(1.2);
   }
   
