@@ -2,7 +2,7 @@
   import Card from "./Card.svelte";
   import type { Card as CardT, Stack } from "../cards";
   import { flip } from "svelte/animate";
-  import { cubicOut, elasticOut } from "svelte/easing";
+  import { quintOut, elasticOut } from "svelte/easing";
   import { fly } from 'svelte/transition';
 
   export let active = false;
@@ -23,8 +23,8 @@
   <div class="hand" id="hand" class:active>
     {#each cards as card (card.id)}
       <div class="card-wrapper" class:active={playable[card.id]} 
-        animate:flip={{easing: elasticOut, duration: 1000}}
-        in:fly={{x: -90, duration: 700, opacity: 0.5, easing: elasticOut}}
+        animate:flip={{easing: quintOut, duration: 700}}
+        in:fly={{x: -90, duration: 700, opacity: 0.5, easing: quintOut}}
         out:fly={{y: -90, duration: 400, opacity: 0, delay: -400}}
       >
         <Card

@@ -32,7 +32,7 @@
     if (ctx.gameover) {
       message = "gameover";
     } else if (selectedCard && selectedCard.type == "tactic") {
-      message = `<strong>${selectedCard.text}. </strong> ${selectedCard.tip} ${ !playable[selectedCard.id] ? " You can't currently play this card." : "" }`;
+      message = `<strong>${selectedCard.text}.</strong> ${selectedCard.tip} ${!playable[selectedCard.id] ? " You can't currently play this card." : "" }`;
 
     } else if (stage) {
       message = stage;
@@ -197,8 +197,9 @@
     .board-wrapper {
       grid-template-areas:
         "circles circles"
-        "decks hand"
-        "discard message";
+        "message message"
+        "hand hand"
+        "discard decks";
     }
     .decks {
       flex-direction: row;
@@ -207,7 +208,8 @@
       transform: rotate(-90deg);
     }
 
-    .decks > :global(.deck) {
+    .discard {
+      transform: rotate(-90deg)
     }
   }
 
@@ -235,4 +237,5 @@
   .discard {
     grid-area: discard;
   }
+  
 </style>

@@ -235,6 +235,7 @@ function scoreCircles(G: GameState, ctx: Ctx): void {
   });
 
   if (circles.length > 0) {
+    // cards that might still be added
     const unplayedTroops = Object.values(G.players)
       .map((e) => e.hand)
       .reduce((a, b) => a.concat(b))
@@ -242,19 +243,19 @@ function scoreCircles(G: GameState, ctx: Ctx): void {
       .concat(G.troops);
 
     circles.forEach((crc) => {
-      // score cards on both sides
+      // update scores on both sides
       Object.entries(crc.cards).forEach(([pId, cards]) => {
-        // if player has played maxCards cards test if they can claim circle
-        if (cards.length == crc.maxCards) {
-          crc.scores[pId] = scoreRanks(cards); // for testing
+        if (!crc.scoringFunc) {
+          // default scoring
+          crc.scores[pId] = scoreFormation(cards);
         } else {
-          // ToDo: find best...
-          crc.scores[pId] = scoreRanks(cards); // for testing
+          // there's only one non-default scoring: counting only ranks
+          crc.scores[pId] = scoreRanks(cards);
         }
       });
-
+      
       const maxScore = Math.max(...Object.values(crc.scores));
-
+      
       // Is a player winning the cirle?
       Object.entries(crc.cards).forEach(([pId, cards]) => {
         if (cards.length == crc.maxCards && crc.scores[pId] === maxScore) {
@@ -265,55 +266,57 @@ function scoreCircles(G: GameState, ctx: Ctx): void {
   }
 }
 
+function scoreFormation(cards: Stack) {
+
+  // cards.map((e) => {
+  //   if(Array.isArray(rank) || Array.isArray(suit)) {
+  //     return 
+  //   }
+  // })
+
+  // Straight (consecutive numbers)
+  function is_straight(cards): boolean {
+    //stack.sort((a,b) => a.value - b.value);
+    return false;
+  }
+
+  // Flush (same color)
+  function is_flush(cards): boolean {
+    // stack.every(e => e.suit === stack[0].suit);
+    return false;
+  }
+
+  // N of a kind (same number)
+  function is_onekind(cards): boolean {
+    // stack.every(e => e.value === stack[0].value);
+    return false;
+  }
+
+  let score = 0;
+
+  if (is_straight && is_flush) {
+      score = 400;
+  } else if (is_onekind) {
+      score = 300;
+  } else if (is_flush) {
+      score = 200;
+  } else if (is_straight) {
+      score = 100;
+  }
+
+  return score + scoreRanks(cards);
+}
+
 // Sum of card ranks, used when no valid formation or as tie breaker
-// When there's a wildcard use the max
 function scoreRanks(cards: Stack): number {
-  const bestRanks = cards.map((e) => {
+  // When there's a wildcard use the max
+  const maxRanks = cards.map((e) => {
     let rank = e.rank;
     return Array.isArray(rank) ? Math.max(...rank) : rank;
   });
-
-  return bestRanks.reduce((a, b) => a + b, 0);
+  return maxRanks.reduce((a, b) => a + b, 0);
 }
 
-function scoreFormation(cards: Stack) {
-  
-}
-
-// scoreDefault = function(stack) {
-//     let scr_formations: number = 0;
-//     let scr_ranks: number = sumRanks(stack);
-
-//     if (is_straight && is_flush) {
-//         scr_formations = 4;
-//     } else if (is_onekind) {
-//         scr_formations = 3;
-//     } else if (is_flush) {
-//         scr_formations = 2;
-//     } else if (is_straight) {
-//         scr_formations = 1;
-//     }
-
-//     return [scr_formations, scr_ranks];
-// }
-
-// // Straight (consecutive numbers)
-// function is_straight(stack: Stack): boolean {
-//     //stack.sort((a,b) => a.value - b.value);
-//     return false;
-// }
-
-// // Flush (same color)
-// function is_flush(stack: Stack): boolean {
-//     // stack.every(e => e.suit === stack[0].suit);
-//     return false;
-// }
-
-// // N of a kind (same number)
-// function is_onekind(stack: Stack): Boolean {
-//     // stack.every(e => e.value === stack[0].value);
-//     return false;
-// }
 
 // Determine if a player has won the game. Checked whenever a circle is claimed.
 // Game ends immediately if a player has won 5 total or 3 adjacent circles
