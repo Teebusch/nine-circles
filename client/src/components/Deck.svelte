@@ -8,14 +8,14 @@
 
 <div class="deck">
 {#if nCards > 0}
-    <div class="top-card" class:active={active && nCards > 0} on:click>
-      <span>{deck}</span>
-      <span>{nCards}</span>
-    </div>
-    {:else}
-    <div class="placeholder"></div>
-    {/if}
+  <div class="top-card" class:active={active && nCards > 0} on:click>
+    <span>{deck}</span>
+    <span>{nCards}</span>
   </div>
+{:else}
+  <div class="placeholder"></div>
+{/if}
+</div>
 
 <style>
   .deck {

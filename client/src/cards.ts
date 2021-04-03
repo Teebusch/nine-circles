@@ -1,8 +1,8 @@
 export interface Card {
     readonly id: string;
     readonly type: "troop" | "tactic";
-    readonly suit?: number | Array<number>;  // Array is used for tactics with wildcard suit
-    readonly rank?: number | Array<number>;  // Array is used for tactics
+    suit?: number | Array<number>;           // Array is used for tactics with wildcard suit
+    rank?: number | Array<number>;           // Array is used for tactics
     readonly rankText?: string;              // used for tactics
     readonly text?: string | null;           // text on the card
     readonly tip?: string | null;            // tooltip with extra explanations
@@ -50,7 +50,7 @@ export const Tactics: Stack = [
         type: 'tactic',
         text: 'Chimera',     
         suit: [1, 2, 3, 4, 5, 6], 
-        rank: 8,
+        rank: [8],
         rankText: '8',
         tip: 'Play as troop. Counts as an 8. Color is determined when circle is claimed.',
         move: 'placeCard'
