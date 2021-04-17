@@ -281,22 +281,46 @@ function scoreFormation(cards: Stack): number {
       return false;
     } else {
       // Both, troops and wildcards.
-      let ranks = Array(10).fill(false);
+      let usedRanks = Array(10).fill(false);
+      let nCards = wilds.length + troops.length; 
+      let nNeeded = nCards; // consecutive numbers needed
+
       const troopRanks = troops.map(e => e.rank);
-      
       for (const r of troopRanks) {
-        if (ranks[r-1] === false) {
-          ranks[r-1] = true;
+        if (usedRanks[r-1] === false) {
+          usedRanks[r-1] = true;
         } else {
-          return false; // no duplicate ranks
+          return false; // abort, no duplicate ranks
         }
       };
       
       let wildRanks = wilds.map(e => e.rank); 
-      // [8]
-      // [1,2,3]
-      // [1-10]
-      //  ...
+      for(const wr of wildRanks) {
+        if (wr.length === 10) {
+          // [1-10] - counts as any rank
+          nNeeded -= 1;
+        } else {
+          // [8], // [1,2,3]
+          // try larger ranks first, because it gives more points in the sum score
+          for (let i = wr.length; i >= 0; i--) {
+            const r = wr[i]
+            if (usedRanks[r-1] === false) {
+              usedRanks[r-1] = true;
+              break;
+            }
+          }
+          return false;  // all wild ranks were already used by regular troops
+        }
+      }
+      
+      let i = Math.min(usedRanks.findIndex(e => e), 9 - nCards);
+      for (i; i >= 0; i--) {
+        const j = i + nCards;
+        const n = usedRanks.slice(i, j).reduce((a,b) => a + b)
+        if (n === nNeeded) {
+          return true;
+        }
+      }
 
       return false;
     }
